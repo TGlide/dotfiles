@@ -1,30 +1,27 @@
 return {
-	'neovim/nvim-lspconfig',
-	cmd = 'LspInfo',
-	event = { 'BufReadPre', 'BufNewFile' },
+	"neovim/nvim-lspconfig",
+	cmd = "LspInfo",
+	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
-		{ 'hrsh7th/cmp-nvim-lsp' },
+		{ "hrsh7th/cmp-nvim-lsp" },
 	},
 	init = function()
 		-- Reserve a space in the gutter
 		-- This will avoid an annoying layout shift in the screen
-		vim.opt.signcolumn = 'yes'
+		vim.opt.signcolumn = "yes"
 	end,
 	config = function()
-		local lsp_defaults = require('lspconfig').util.default_config
+		local lsp_defaults = require("lspconfig").util.default_config
 
 		-- Add cmp_nvim_lsp capabilities settings to lspconfig
 		-- This should be executed before you configure any language server
-		lsp_defaults.capabilities = vim.tbl_deep_extend(
-			'force',
-			lsp_defaults.capabilities,
-			require('cmp_nvim_lsp').default_capabilities()
-		)
+		lsp_defaults.capabilities =
+			vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
 
 		-- LspAttach is where you enable features that only work
 		-- if there is a language server active in the file
-		vim.api.nvim_create_autocmd('LspAttach', {
-			desc = 'LSP actions',
+		vim.api.nvim_create_autocmd("LspAttach", {
+			desc = "LSP actions",
 			callback = function(event)
 				local map = function(keys, func, desc, mode)
 					mode = mode or "n"
@@ -37,7 +34,6 @@ return {
 				map("K", function()
 					vim.lsp.buf.hover()
 				end, "Show documentation for symbol under cursor")
-
 
 				-- Jump to the definition of the word under your cursor.
 				--  This is where a variable was first declared, or where a function is defined, etc.
@@ -107,7 +103,6 @@ return {
 					vim.diagnostic.goto_next()
 				end, "Next Diagnostic")
 
-
 				-- The following code creates a keymap to toggle inlay hints in your
 				-- code, if the language server you are using supports them
 				--
@@ -118,7 +113,6 @@ return {
 						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 					end, "[T]oggle Inlay [H]ints")
 				end
-
 
 				-- These are the examples in lsp-zero. Reference: https://lsp-zero.netlify.app/docs/guide/lazy-loading-with-lazy-nvim
 				-- vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
@@ -133,15 +127,16 @@ return {
 		})
 
 		-- Setup LSPs
-		require('lspconfig').lua_ls.setup({})
-		require('lspconfig').svelte.setup({})
-		require('lspconfig').ts_ls.setup({})
+		require("lspconfig").lua_ls.setup({})
+		require("lspconfig").svelte.setup({})
+		require("lspconfig").ts_ls.setup({})
+		require("lspconfig").nixd.setup({})
 
 		-- Styling
 		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 
 		vim.lsp.handlers["textDocument/signatureHelp"] =
-				vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
+			vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 
 		vim.diagnostic.config({
 			-- update_in_insert = true,
@@ -154,5 +149,5 @@ return {
 				prefix = "",
 			},
 		})
-	end
+	end,
 }
