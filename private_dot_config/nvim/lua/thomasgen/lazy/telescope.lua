@@ -16,7 +16,11 @@ return {
 
 		local builtin = require("telescope.builtin")
 		vim.keymap.set("n", "<leader>t", ":Telescope<CR>", {})
-		vim.keymap.set("n", "<leader>pf", builtin.find_files, { desc = "Find [F]iles" })
+		vim.keymap.set("n", "<leader>pf", function()
+			builtin.find_files({
+				file_ignore_patterns = { "node%_modules/.*", ".git/.*" },
+			})
+		end, { desc = "Find [F]iles" })
 		vim.keymap.set("n", "<leader>pg", builtin.git_files, { desc = "Find [G]it Files" })
 		vim.keymap.set("n", "<leader>pws", function()
 			local word = vim.fn.expand("<cword>")
