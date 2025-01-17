@@ -1,1 +1,3 @@
 set -x hithere "thomas"
+set -x ANTHROPIC_API_KEY ""
+
