@@ -127,10 +127,12 @@ return {
 		})
 
 		-- Setup LSPs
+		-- To check what LSPs are available, go to https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#lsp-configs
 		require("lspconfig").lua_ls.setup({})
 		require("lspconfig").svelte.setup({})
 		require("lspconfig").ts_ls.setup({})
 		require("lspconfig").nixd.setup({})
+		require("lspconfig").tailwindcss.setup({})
 
 		-- Styling
 		vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
