@@ -1,6 +1,6 @@
 return {
 	"Exafunction/codeium.vim",
-	-- enabled = false,
+	enabled = false,
 	config = function()
 		local map = function(keys, func, desc, mode)
 			mode = mode or "n"
