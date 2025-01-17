@@ -107,12 +107,12 @@ return {
 				-- code, if the language server you are using supports them
 				--
 				-- This may be unwanted, since they displace some of your code
-				local client = vim.lsp.get_client_by_id(event.data.client_id)
-				if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-					map("<leader>th", function()
-						vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
-					end, "[T]oggle Inlay [H]ints")
-				end
+				-- local client = vim.lsp.get_client_by_id(event.data.client_id)
+				-- if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+				-- 	map("<leader>th", function()
+				-- 		vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
+				-- 	end, "[T]oggle Inlay [H]ints")
+				-- end
 
 				-- These are the examples in lsp-zero. Reference: https://lsp-zero.netlify.app/docs/guide/lazy-loading-with-lazy-nvim
 				-- vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
