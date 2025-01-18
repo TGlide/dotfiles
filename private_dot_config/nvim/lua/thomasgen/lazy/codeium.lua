@@ -1,7 +1,19 @@
 return {
-	"Exafunction/codeium.vim",
+	"Exafunction/codeium.nvim",
 	enabled = false,
+	commit = "937667b2cadc7905e6b9ba18ecf84694cf227567",
+	dependencies = {
+		"nvim-lua/plenary.nvim",
+		"hrsh7th/nvim-cmp",
+	},
 	config = function()
+		require("codeium").setup({
+			enable_cmp_source = true,
+			virtual_text = {
+				enabled = false,
+			},
+		})
+
 		local map = function(keys, func, desc, mode)
 			mode = mode or "n"
 			vim.keymap.set(mode, keys, func, { desc = desc })
