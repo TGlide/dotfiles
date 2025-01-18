@@ -17,8 +17,8 @@ return {
 				virtualtext = {
 					auto_trigger_ft = { "typescript", "svelte", "lua", "html", "astro" },
 					keymap = {
-						accept = "<A-A>",
-						accept_line = "<A-a>",
+						accept = "<A-a>",
+						-- accept_line = "<A-a>",
 						-- Cycle to prev completion item, or manually invoke completion
 						prev = "<A-[>",
 						-- Cycle to next completion item, or manually invoke completion
