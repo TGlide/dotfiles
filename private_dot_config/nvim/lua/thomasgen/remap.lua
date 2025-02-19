@@ -50,6 +50,17 @@ map("<leader>df", function()
 	vim.notify("Disabled auto-format", vim.log.levels.INFO, { title = "Formatting" })
 end, "Disable auto-format")
 
+-- Organize Imports
+map("<leader>oi", function()
+	vim.lsp.buf.code_action({
+		context = {
+			only = { "source.organizeImports" },
+			diagnostics = vim.diagnostic.get(0),
+		},
+		apply = true,
+	})
+end, "Organize Imports")
+
 -- map("<leader>l", function()
 -- 	local lint = require("lint")
 -- 	lint.try_lint()
