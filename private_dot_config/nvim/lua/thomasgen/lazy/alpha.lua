@@ -1,6 +1,11 @@
 return {
 	"goolord/alpha-nvim",
 	dependencies = {
+		{
+			"catppuccin/nvim",
+			name = "catppuccin",
+			priority = 1000, -- Load colorscheme before other plugins
+		},
 		"echasnovski/mini.icons",
 		"nvim-lua/plenary.nvim",
 	},
@@ -24,6 +29,7 @@ return {
 			-- Randomly select a header
 			math.randomseed(os.time()) -- Initialize random seed
 			local random_header = headers[math.random(#headers)]
+			-- local random_header = "bee"
 
 			-- Construct the full path and require the header
 			local header = "thomasgen.lazy.alpha_headers." .. random_header
