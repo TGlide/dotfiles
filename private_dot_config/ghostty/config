@@ -1,4 +1,4 @@
-theme = catppuccin-macchiato
+theme = rose-pine-moon
 
 # SHADERS
 # custom-shader = ./shaders/bloom.glsl
