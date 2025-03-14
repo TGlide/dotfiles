@@ -133,6 +133,7 @@ return {
 		require("lspconfig").nixd.setup({})
 		require("lspconfig").tailwindcss.setup({})
 		require("lspconfig").lua_ls.setup({})
+		require("lspconfig").cssls.setup({})
 
 		-- Keymaps
 		vim.keymap.set("n", "<leader>oi", function()
