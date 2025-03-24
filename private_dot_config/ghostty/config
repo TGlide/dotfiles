@@ -1,6 +1,10 @@
 theme = rose-pine-moon
 font-family = "FantasqueSansM Nerd Font"
 
+font-family = "FantasqueSansM Nerd Font"
+font-size = 16
+
+
 # SHADERS
 # custom-shader = ./shaders/bloom.glsl
 custom-shader = ./alt-shaders/bettercrt.glsl
