@@ -38,6 +38,7 @@ return {
 			dashboard.section.buttons.val = {
 				dashboard.button("n", "  New file", "<Cmd>ene <CR>"),
 				dashboard.button("SPC p f", "  Find file"),
+				dashboard.button("SPC p v", "  Open Oil"),
 				dashboard.button("SPC w q", "  Quit"),
 			}
 			for _, a in ipairs(dashboard.section.buttons.val) do
