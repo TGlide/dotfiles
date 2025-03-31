@@ -161,7 +161,7 @@
             "enabled": false
         },
         "Experiments": {
-            "enabled": false
+            "enabled": true
         },
         "F8Break": {
             "enabled": false
@@ -220,9 +220,6 @@
             "enabled": false
         },
         "GreetStickerPicker": {
-            "enabled": false
-        },
-        "HideAttachments": {
             "enabled": false
         },
         "iLoveSpam": {
@@ -575,6 +572,15 @@
         },
         "FullUserInChatbox": {
             "enabled": false
+        },
+        "HideMedia": {
+            "enabled": false
+        },
+        "IrcColors": {
+            "enabled": false
+        },
+        "BadgeAPI": {
+            "enabled": true
         }
     },
     "notifications": {
@@ -587,6 +593,7 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1736426380675
-    }
+        "settingsSyncVersion": 1743069468519
+    },
+    "eagerPatches": false
 }
