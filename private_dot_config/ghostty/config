@@ -1,8 +1,7 @@
 theme = rose-pine-moon
-font-family = "FantasqueSansM Nerd Font"
 
 font-family = "FantasqueSansM Nerd Font"
-font-size = 16
+font-size = 13
 
 
 # SHADERS
