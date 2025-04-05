@@ -4,13 +4,31 @@ return {
 	event = "VeryLazy",
 	version = false, -- Never set this value to "*"! Never!
 	opts = {
-		provider = "openrouter",
+		provider = "openrouter/deepseek",
 		vendors = {
-			openrouter = {
+			["openrouter/deepseek-v3"] = {
 				__inherited_from = "openai",
 				endpoint = "https://openrouter.ai/api/v1",
 				api_key_name = "OPENROUTER_API_KEY",
 				model = "deepseek/deepseek-chat-v3-0324",
+			},
+			["openrouter/deepseek-r1-distill-llama-70b"] = {
+				__inherited_from = "openai",
+				endpoint = "https://openrouter.ai/api/v1",
+				api_key_name = "OPENROUTER_API_KEY",
+				model = "deepseek/deepseek-r1-distill-llama-70b",
+			},
+			["openrouter/deepseek-r1-distill-llama-8b"] = {
+				__inherited_from = "openai",
+				endpoint = "https://openrouter.ai/api/v1",
+				api_key_name = "OPENROUTER_API_KEY",
+				model = "deepseek/deepseek-r1-distill-llama-8b",
+			},
+			["openrouter/gemini-flash-2.0"] = {
+				__inherited_from = "openai",
+				endpoint = "https://openrouter.ai/api/v1",
+				api_key_name = "OPENROUTER_API_KEY",
+				model = "google/gemini-2.0-flash-001",
 			},
 		},
 		-- openai = {
