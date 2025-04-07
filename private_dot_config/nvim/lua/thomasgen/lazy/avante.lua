@@ -4,7 +4,7 @@ return {
 	event = "VeryLazy",
 	version = false, -- Never set this value to "*"! Never!
 	opts = {
-		provider = "openrouter/deepseek",
+		provider = "openrouter/deepseek-r1-distill-llama-8b",
 		vendors = {
 			["openrouter/deepseek-v3"] = {
 				__inherited_from = "openai",
