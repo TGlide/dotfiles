@@ -239,8 +239,10 @@ return {
 
 		require("mini.icons").setup({
 			extension = {
-				["spec.ts"] = { glyph = "", hl = "MiniIconsRed" },
+				["spec.ts"] = { glyph = "", hl = "MiniIconsAzure" },
+				["test.ts"] = { glyph = "", hl = "MiniIconsAzure" },
 				["spec.svelte.ts"] = { glyph = "", hl = "MiniIconsAzure" },
+				["test.svelte.ts"] = { glyph = "", hl = "MiniIconsAzure" },
 				["svelte.ts"] = { glyph = "", hl = "MiniIconsAzure" },
 			},
 		})
