@@ -1,0 +1,19 @@
+/***
+ *    ┳┳┓┏┓┏┳┓┳┳┏┓┏┓┳┓  ┓ ┏┏┓┓┏┳┓┏┓┳┓
+ *    ┃┃┃┣┫ ┃ ┃┃┃┓┣ ┃┃━━┃┃┃┣┫┗┫┣┫┣┫┣┫
+ *    ┛ ┗┛┗ ┻ ┗┛┗┛┗┛┛┗  ┗┻┛┛┗┗┛┻┛┛┗┛┗
+ *
+ */
+
+
+/*-----Surface Transparent Background------*/
+@define-color surface-alpha {{colors.surface.default.rgba | set_alpha: 0.25}};
+@define-color primary-bg {{colors.primary.default.rgba | set_alpha: 0.25}};
+
+/*-----All Colors--------*/
+<* for name, value in colors *>
+@define-color {{name}} {{value.default.rgba}};
+<* endfor *>
+
+
+/* @define-color background {{colors.surface.default.rgba | set_lightness: 7.5 | set_alpha: 1.0}}; */

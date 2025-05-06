@@ -1,0 +1,407 @@
+@import "colors.css";
+
+* {
+	font-family: "Fira Sans Semibold", "Font Awesome 6 Free", FontAwesome, Roboto, Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	/* Slightly smaller font size */
+	font-weight: 900;
+	margin: 0;
+	padding: 0;
+	transition-property: background-color;
+	transition-duration: 0.5s;
+}
+
+/* Reset all styles */
+* {
+	border: none;
+	border-radius: 3px;
+	min-height: 0;
+	margin: 0.2em 0.3em 0.2em 0.3em;
+}
+
+/* The whole bar */
+#waybar {
+	background-color: transparent;
+	color: @secondary;
+	/* Using secondary for general text */
+	transition-property: background-color;
+	transition-duration: 0.5s;
+	border-radius: 0px;
+	margin: 0px 0px;
+}
+
+window#waybar.hidden {
+	opacity: 0.2;
+}
+
+button {
+	box-shadow: none;
+}
+
+
+button:hover {
+	box-shadow: none;
+	text-shadow: none;
+}
+
+#workspaces button {
+	padding: 3px 5px;
+	/* Adjusted padding to reduce height */
+	margin: 3px 5px;
+	/* Reduced margin slightly */
+	border-radius: 9px;
+	color: @primary;
+	/* Using primary for default button text */
+	background-color: @background;
+	/* Using background for button background */
+	transition: all 0.2s ease;
+	font-size: 13px;
+	/* Slightly smaller font size */
+}
+
+#workspaces button.active {
+	color: @on_primary;
+	/* Text color for active button */
+	background: @primary;
+	/* Background for active button */
+}
+
+#workspaces button:hover:not(.active) {
+	background: transparent;
+	box-shadow: none;
+}
+
+#workspaces button.urgent {
+	background-color: @error;
+	/* Using error for urgent */
+	color: @on_error;
+}
+
+#workspaces {
+	background-color: @background;
+	/* Using background for workspaces container */
+	border-radius: 12px;
+	padding: 3px 3px;
+}
+
+#window {
+	background-color: @background;
+	/* Using background for window module */
+	font-size: 15px;
+	/* Slightly smaller font size */
+	font-weight: 800;
+	color: @primary;
+	/* Using primary for window text */
+	border-radius: 14px;
+	padding: 3px 6px;
+	/* Reduced padding */
+	margin: 2px;
+	opacity: 1;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-media,
+#mode,
+#idle_inhibitor,
+#mpd,
+#bluetooth,
+#custom-hyprPicker,
+#custom-power-menu,
+#custom-spotify,
+#custom-weather,
+#custom-weather.severe,
+#custom-weather.sunnyDay,
+#custom-weather.clearNight,
+#custom-weather.cloudyFoggyDay,
+#custom-weather.cloudyFoggyNight,
+#custom-weather.rainyDay,
+#custom-weather.rainyNight,
+#custom-weather.showyIcyDay,
+#custom-weather.snowyIcyNight,
+#custom-weather.default {
+	background-color: @background;
+	/* Using background for various modules */
+	border-radius: 12px;
+	padding: 0 16px;
+	/* Adjusted padding */
+}
+
+#custom-screenshot_t {
+	background-color: @background;
+	/* Using background */
+	border-radius: 14px;
+	padding: 6px;
+}
+
+#custom-spotify {
+	background-color: @background;
+	/* Using background */
+	border-radius: 14px;
+	padding: 3px 12px;
+}
+
+#tray {
+	background-color: @background;
+	/* Using background */
+	border-radius: 14px;
+	padding: 6px;
+	/* Adjusted padding */
+}
+
+#cpu {
+	color: @tertiary;
+	/* Using tertiary for CPU */
+	background-color: @background;
+	/* Using background */
+	padding: 6px;
+}
+
+#memory {
+	color: @secondary_fixed;
+	/* Using secondary_fixed for Memory */
+	background-color: @background;
+	/* Using background */
+	padding: 0 16px;
+}
+
+#custom-power {
+	background-color: @background;
+	/* Using background */
+	border-radius: 14px;
+	padding: 6px;
+}
+
+#custom-storage {
+	background-color: @background;
+	/* Using background */
+	border-radius: 14px;
+	padding: 6px;
+}
+
+#custom-launcher {
+	background-color: @surface_container_low;
+	/* Using a darker surface variant */
+	color: @primary;
+	/* Using primary for launcher text */
+	border-radius: 7.5px;
+	padding: 3px 6px;
+	/* Adjusted padding */
+}
+
+#custom-weather.severe {
+	color: @error;
+	/* Using error for severe weather */
+}
+
+#custom-weather.sunnyDay {
+	color: @primary_fixed;
+	/* Using a primary variant */
+}
+
+#custom-weather.clearNight {
+	color: @secondary_fixed_dim;
+	/* Using a secondary variant */
+}
+
+#custom-weather.cloudyFoggyDay,
+#custom-weather.cloudyFoggyNight {
+	color: @surface_variant;
+	/* Using a surface variant */
+}
+
+#custom-weather.rainyDay,
+#custom-weather.rainyNight {
+	color: @tertiary;
+	/* Using tertiary */
+}
+
+#custom-weather.showyIcyDay,
+#custom-weather.snowyIcyNight {
+	color: @primary_fixed_dim;
+	/* Using a primary variant */
+}
+
+#custom-weather.default {
+	color: @on_surface_variant;
+	/* Using a surface variant */
+}
+
+/* If workspaces is the leftmost module, omit left margin */
+.modules-left>widget:first-child>#workspaces {
+	margin-left: 0;
+}
+
+/* If workspaces is the rightmost module, omit right margin */
+.modules-right>widget:last-child>#workspaces {
+	margin-right: 0;
+}
+
+#pulseaudio {
+	color: @secondary;
+	/* Using secondary */
+}
+
+#backlight {
+	color: @tertiary_fixed_dim;
+	/* Using a tertiary variant */
+}
+
+#clock {
+	padding: 0px 16px;
+	color: @primary_fixed;
+	/* Using a primary variant for clock */
+}
+
+#battery {
+	color: @secondary_fixed;
+	/* Using a secondary variant for battery */
+}
+
+#battery.charging,
+#battery.full,
+#battery.plugged {
+	color: @on_primary;
+	/* Using on_primary for positive battery states */
+}
+
+@keyframes blink {
+	to {
+		background-color: @surface_container_low;
+		/* Using a surface variant for blink */
+		color: @on_surface_variant;
+		/* Using a surface variant for blink text */
+	}
+}
+
+#battery.critical:not(.charging) {
+	color: @error;
+	/* Using error for critical battery */
+	animation-name: blink;
+	animation-duration: 0.5s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+label:focus {
+	background-color: @surface_dim;
+	/* Using surface_dim for focus */
+}
+
+#disk {
+	background-color: @tertiary_container;
+	/* Using a tertiary container */
+	color: @on_tertiary_container;
+}
+
+#bluetooth {
+	color: @secondary_container;
+	/* Using a secondary container */
+}
+
+#bluetooth.disconnected {
+	color: @error;
+	/* Using error for disconnected */
+}
+
+#network {
+	color: @primary_container;
+	/* Using a primary container */
+}
+
+#network.disconnected {
+	color: @error;
+	/* Using error for disconnected */
+}
+
+#custom-media {
+	background-color: @tertiary;
+	/* Using tertiary */
+	color: @on_tertiary;
+	/* Using on_tertiary */
+	min-width: 100px;
+}
+
+#custom-media.custom-spotify {
+	background-color: @tertiary;
+	/* Using tertiary */
+}
+
+#custom-media.custom-vlc {
+	background-color: @secondary_fixed_dim;
+	/* Using a secondary variant */
+}
+
+#temperature {
+	background-color: @secondary_fixed;
+	/* Using a secondary variant */
+	color: @on_secondary_fixed;
+}
+
+#temperature.critical {
+	background-color: @error;
+	/* Using error for critical temperature */
+	color: @on_error;
+}
+
+#tray>.passive {
+	-gtk-icon-effect: dim;
+}
+
+#tray>.needs-attention {
+	-gtk-icon-effect: highlight;
+	background-color: @error;
+	/* Using error for attention needed */
+	color: @on_error;
+}
+
+#idle_inhibitor {
+	background-color: @surface_container_low;
+	/* Using a surface variant */
+	color: @on_surface_variant;
+}
+
+#idle_inhibitor.activated {
+	background-color: @primary_fixed;
+	/* Using a primary variant */
+	color: @on_primary_fixed;
+	/* Using an on_primary variant */
+}
+
+#language {
+	background: @tertiary;
+	/* Using tertiary */
+	color: @on_tertiary;
+	/* Using on_tertiary */
+	padding: 0 0px;
+	margin: 0 5px;
+	min-width: 16px;
+}
+
+#keyboard-state {
+	background: @secondary_fixed;
+	/* Using a secondary variant */
+	color: @on_secondary_fixed;
+	/* Using an on_secondary variant */
+	padding: 0 0px;
+	margin: 0 5px;
+	min-width: 16px;
+}
+
+#keyboard-state>label {
+	padding: 0 0px;
+}
+
+#keyboard-state>label.locked {
+	background: rgba(0, 0, 0, 0.2);
+	/* Keeping the semi-transparent black */
+}
