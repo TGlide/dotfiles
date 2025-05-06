@@ -37,3 +37,11 @@ output_path = '~/.config/starship.toml'
 [templates.neovim]
 input_path = './templates/neovim-colors.lua'
 output_path = '~/.config/nvim/lua/matugen/colors.lua'
+
+[templates.yazi]
+input_path = './templates/yazi-theme.toml'
+output_path = '~/.config/yazi/theme.toml'
+
+[templates.qt5ct]
+input_path = './templates/qtct-colors.conf'
+output_path = '~/.config/qt5ct/colors/matugen.conf'
