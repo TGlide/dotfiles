@@ -33,3 +33,7 @@ output_path = '~/.config/gtk-4.0/colors.css'
 [templates.starship]
 input_path = './templates/starship-colors.toml'
 output_path = '~/.config/starship.toml'
+
+[templates.neovim]
+input_path = './templates/neovim-colors.lua'
+output_path = '~/.config/nvim/lua/thomasgen/colors.lua'
