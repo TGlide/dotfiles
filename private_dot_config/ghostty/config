@@ -7,6 +7,6 @@ font-size = 13
 
 # SHADERS
 # custom-shader = ./shaders/bloom.glsl
-custom-shader = ./alt-shaders/bettercrt.glsl
-custom-shader = ./alt-shaders/bloom1.glsl
-custom-shader = ./alt-shaders/scanlines.glsl
+# custom-shader = ./alt-shaders/bettercrt.glsl
+# custom-shader = ./alt-shaders/bloom1.glsl
+# custom-shader = ./alt-shaders/scanlines.glsl

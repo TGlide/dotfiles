@@ -1,5 +1,6 @@
 return {
 	"olimorris/codecompanion.nvim",
+	enabled = false,
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-treesitter/nvim-treesitter",
@@ -8,10 +9,10 @@ return {
 		require("codecompanion").setup({
 			strategies = {
 				chat = {
-					adapter = "anthropic",
+					adapter = "ollama",
 				},
 				inline = {
-					adapter = "anthropic",
+					adapter = "ollama",
 				},
 			},
 		})
