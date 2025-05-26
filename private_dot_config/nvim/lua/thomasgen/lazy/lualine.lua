@@ -127,7 +127,10 @@ return {
 					"diff",
 					"diagnostics",
 				},
-				lualine_c = { { "filename", path = 1 } },
+				lualine_c = {
+					-- { require("NeoComposer.ui").status_recording },
+					{ "filename", path = 1 },
+				},
 				lualine_x = { "filetype" },
 				lualine_y = { "progress" },
 				lualine_z = {
