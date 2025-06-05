@@ -5,7 +5,7 @@
 
 [config.wallpaper]
 command = "swaybg"
-arguments = ["-i"]
+arguments = ["-m", "fill", "-i"]
 set = true
 
 
