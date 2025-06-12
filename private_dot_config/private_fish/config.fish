@@ -4,7 +4,8 @@ set -g __fish_home_manager_config_sourced 1
 
 source /nix/store/pyfj0gysbagb9g8w4q98fl0hf603ygfa-hm-session-vars.fish
 
-
+# Add ROCm bin directory to PATH
+set -gx PATH "/opt/rocm/bin" $PATH
 
 
 status is-login; and begin
