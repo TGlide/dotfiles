@@ -83,6 +83,62 @@ return {
 			}
 		)
 
+		-- Create a custom command to wrap double quotes with {[]} at cursor position
+		vim.api.nvim_create_user_command("WrapQuotesWithBrackets", function()
+			-- Get cursor position (1-indexed for line, 0-indexed for column)
+			local cursor = vim.api.nvim_win_get_cursor(0)
+			local line_num = cursor[1]
+			local col_num = cursor[2] + 1 -- Convert to 1-indexed for string operations
+
+			-- Get the current line
+			local line = vim.api.nvim_get_current_line()
+
+			-- Find all quote pairs in the line
+			local quote_start, quote_end = nil, nil
+			local pos = 1
+
+			while pos <= #line do
+				local start_pos = line:find('"', pos)
+				if not start_pos then
+					break
+				end
+
+				local end_pos = line:find('"', start_pos + 1)
+				if not end_pos then
+					break
+				end
+
+				-- Check if cursor is within or on this quote pair
+				if col_num >= start_pos and col_num <= end_pos then
+					quote_start = start_pos
+					quote_end = end_pos
+					break
+				end
+
+				pos = end_pos + 1
+			end
+
+			-- If we found quotes surrounding the cursor, wrap them
+			if quote_start and quote_end then
+				local before = line:sub(1, quote_start - 1)
+				local quoted_content = line:sub(quote_start, quote_end)
+				local after = line:sub(quote_end + 1)
+
+				local new_line = before .. "{[" .. quoted_content .. "]}" .. after
+
+				-- Replace the line
+				vim.api.nvim_set_current_line(new_line)
+
+				-- Adjust cursor position (move it after the inserted characters)
+				local new_col = col_num + 2 -- Account for the added '{[' characters
+				vim.api.nvim_win_set_cursor(0, { line_num, new_col - 1 }) -- Convert back to 0-indexed
+			else
+				print("No quotes found at cursor position")
+			end
+		end, {
+			desc = "Wrap double quotes at cursor with {[]}",
+		})
+
 		require("mini.pairs").setup({
 			-- In which modes mappings from this `config` should be created
 			modes = { insert = true, command = false, terminal = false },
