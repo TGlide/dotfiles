@@ -3,8 +3,6 @@ local map = function(keys, func, desc, mode)
 	vim.keymap.set(mode, keys, func, { desc = desc })
 end
 
-vim.g.mapleader = " "
-
 -- Project view
 map("<leader>pv", ":Oil<CR>", "Open Oil file explorer")
 
@@ -102,3 +100,7 @@ vim.api.nvim_create_user_command("Cppath", function()
 	vim.fn.setreg("+", path)
 	vim.notify('Copied "' .. path .. '" to the clipboard!')
 end, {})
+
+-- Kickstart keymaps
+
+vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
