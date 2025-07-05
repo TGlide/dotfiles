@@ -1,0 +1,9 @@
+[user]
+    name = Thomas G. Lopes
+    email = 26071571+TGlide@users.noreply.github.com
+[pull]
+    rebase = true
+[init]
+    defaultBranch = main
+[credential]
+    helper = /usr/bin/git-credential-libsecret ; Or the correct path to your helper

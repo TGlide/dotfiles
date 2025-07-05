@@ -1,0 +1,10 @@
+Host vps
+	HostName 37.221.194.92
+	User root
+	IdentityFile ~/.ssh/vps
+
+Host github.com
+	HostName github.com
+	User git
+	IdentityFile ~/.ssh/github
+	AddKeysToAgent yes
