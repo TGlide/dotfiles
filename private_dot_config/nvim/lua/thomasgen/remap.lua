@@ -96,3 +96,9 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "qf" },
 	command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]],
 })
+
+vim.api.nvim_create_user_command("Cppath", function()
+	local path = vim.fn.expand("%:p")
+	vim.fn.setreg("+", path)
+	vim.notify('Copied "' .. path .. '" to the clipboard!')
+end, {})
