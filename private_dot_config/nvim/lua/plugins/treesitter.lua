@@ -31,6 +31,7 @@ return {
 
 			indent = {
 				enable = true,
+				disable = { "gdscript" },
 			},
 
 			highlight = {

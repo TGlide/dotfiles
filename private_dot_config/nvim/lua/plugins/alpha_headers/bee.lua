@@ -39,7 +39,7 @@ end
 local M = {}
 
 M.setup = function(dashboard)
-	local color = require("thomasgen.util.color")
+	local color = require("util.color")
 	local alpha = require("alpha")
 
 	local mocha = require("catppuccin.palettes").get_palette("mocha")
