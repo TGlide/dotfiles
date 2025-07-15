@@ -20,6 +20,7 @@ return {
 				"astro",
 				"vue",
 				"css",
+				"scss",
 			},
 
 			-- Install parsers synchronously (only applied to `ensure_installed`)
