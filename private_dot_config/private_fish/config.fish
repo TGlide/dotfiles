@@ -48,6 +48,7 @@ status is-interactive; and begin
     set fish_greeting # Disable greeting
     test -f ~/.config/myvars; and source ~/.config/myvars
     test -f /run/current-system/sw/share/autojump/autojump.fish; and source /run/current-system/sw/share/autojump/autojump.fish
+		[ -f /opt/homebrew/share/autojump/autojump.fish ]; and source /opt/homebrew/share/autojump/autojump.fish
     test -f ~/.env; and source ~/.env
 
 
@@ -72,13 +73,14 @@ status is-interactive; and begin
 end
 
 # pnpm
-set -gx PNPM_HOME "/home/thomasgl/.local/share/pnpm"
-if not string match -q -- $PNPM_HOME $PATH
-  set -gx PATH "$PNPM_HOME" $PATH
-end
+export PNPM_HOME="/Users/thomasglopes/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 # pnpm end
 
-
+set -Ux ENV ~/.config/fish/config.fish
 
 if not set -q SSH_AUTH_SOCK
 	# Check if ssh-agent is already running and accessible
@@ -130,3 +132,5 @@ end
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
+set -gx VOLTA_HOME "$HOME/.volta"
+set -gx PATH "$VOLTA_HOME/bin" $PATH
