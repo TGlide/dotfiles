@@ -73,11 +73,16 @@ status is-interactive; and begin
 end
 
 # pnpm
-export PNPM_HOME="/Users/thomasglopes/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+switch (uname)
+    case Linux
+        set -gx PNPM_HOME "/home/thomasgl/.local/share/pnpm"
+    case Darwin
+        set -gx PNPM_HOME "/Users/thomasglopes/.local/share/pnpm"
+end
+
+if not string match -q -- $PNPM_HOME $PATH
+    set -gx PATH "$PNPM_HOME" $PATH
+end
 # pnpm end
 
 set -Ux ENV ~/.config/fish/config.fish
