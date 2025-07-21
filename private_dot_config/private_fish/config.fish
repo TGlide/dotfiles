@@ -42,6 +42,8 @@ status is-interactive; and begin
     alias gs 'git status'
     alias nv nvim
     alias yay paru
+		alias wo 'pomodoro work'
+		alias br 'pomodoro break'
 
     # Interactive shell initialisation
     fish_config theme choose rose-pine-moon

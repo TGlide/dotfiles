@@ -21,6 +21,7 @@ return {
 				"vue",
 				"css",
 				"scss",
+				"gdscript",
 			},
 
 			-- Install parsers synchronously (only applied to `ensure_installed`)
