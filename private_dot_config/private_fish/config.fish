@@ -7,6 +7,10 @@ set -g __fish_home_manager_config_sourced 1
 set -gx PATH "/opt/rocm/bin" $PATH
 
 
+set --export VOLTA_HOME "$HOME/.volta"
+set --export PATH "$VOLTA_HOME/bin" $PATH
+
+
 status is-login; and begin
 
     # Login shell initialisation
@@ -139,5 +143,3 @@ end
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
-set -gx VOLTA_HOME "$HOME/.volta"
-set -gx PATH "$VOLTA_HOME/bin" $PATH
