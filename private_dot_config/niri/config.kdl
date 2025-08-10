@@ -258,6 +258,7 @@ layout {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-at-startup "waybar"
 spawn-at-startup "xwayland-satellite"
+spawn-at-startup "swww-daemon"
 spawn-at-startup "sh" "-c" "matugen image $(~/scripts/random-wallpaper.sh)"
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
@@ -363,7 +364,7 @@ binds {
 	// SCRIPTS
 		Super+B { spawn "sh" "-c" "matugen image $(~/scripts/random-wallpaper.sh)"; }
 		Super+Space hotkey-overlay-title="Open rofi" { spawn "rofi" "-show" "drun"; }
-    Super+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+    Super+L hotkey-overlay-title="Lock the Screen" { spawn "hyprlock"; }
 		Super+Shift+W hotkey-overlay-title="Restart Waybar" { spawn "sh" "-c" "killall waybar ; sleep 0.1 ; waybar & disown
 " ; }
 		// Super+A hotkey-overlay-title="Capture Screen" { spawn "sh" "-c" "grim -g \"$(slurp; sleep .1)\" - | swappy -f -"; }
