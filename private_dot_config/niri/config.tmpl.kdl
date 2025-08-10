@@ -362,7 +362,7 @@ binds {
     Mod+T hotkey-overlay-title="Open a Terminal: Ghostty" { spawn "ghostty"; }
 		Super+E hotkey-overlay-title="Open Nautilus" { spawn "nautilus"; }
 
-	// SCRIPTS
+		// SCRIPTS
 		Super+B { spawn "sh" "-c" "matugen image $(~/scripts/random-wallpaper.sh)"; }
 		Super+Space hotkey-overlay-title="Open rofi" { spawn "rofi" "-show" "drun"; }
     Super+L hotkey-overlay-title="Lock the Screen" { spawn "hyprlock"; }
@@ -370,6 +370,7 @@ binds {
 " ; }
 		// Super+A hotkey-overlay-title="Capture Screen" { spawn "sh" "-c" "grim -g \"$(slurp; sleep .1)\" - | swappy -f -"; }
 		Super+M hotkey-overlay-title="Media Output Select" { spawn "sh" "-c" "~/scripts/rofi-media.sh"; }
+		Super+Semicolon hotkey-overlay-title="Emoji picker" { spawn "sh" "-c" "rofimoji"; }
 		
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
