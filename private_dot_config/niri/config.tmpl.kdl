@@ -365,7 +365,7 @@ binds {
 		// SCRIPTS
 		Super+B { spawn "sh" "-c" "matugen image $(~/scripts/random-wallpaper.sh)"; }
 		Super+Space hotkey-overlay-title="Open rofi" { spawn "rofi" "-show" "drun"; }
-    Super+L hotkey-overlay-title="Lock the Screen" { spawn "hyprlock"; }
+    Super+L hotkey-overlay-title="Lock the Screen" allow-when-locked=true { spawn "hyprlock"; }
 		Super+Shift+W hotkey-overlay-title="Restart Waybar" { spawn "sh" "-c" "killall waybar ; sleep 0.1 ; waybar & disown
 " ; }
 		// Super+A hotkey-overlay-title="Capture Screen" { spawn "sh" "-c" "grim -g \"$(slurp; sleep .1)\" - | swappy -f -"; }
