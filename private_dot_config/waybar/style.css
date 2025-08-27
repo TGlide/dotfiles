@@ -16,7 +16,7 @@
 	border: none;
 	border-radius: 3px;
 	min-height: 0;
-	margin: 0.2em 0.3em 0.2em 0.3em;
+	margin: 0;
 }
 
 /* The whole bar */
@@ -114,6 +114,7 @@ button:hover {
 #idle_inhibitor,
 #mpd,
 #bluetooth,
+#power-profiles-daemon,
 #custom-hyprPicker,
 #custom-power-menu,
 #custom-spotify,
@@ -237,7 +238,7 @@ button:hover {
 
 /* If workspaces is the leftmost module, omit left margin */
 .modules-left>widget:first-child>#workspaces {
-	margin-left: 0;
+	margin-left: 0px;
 }
 
 /* If workspaces is the rightmost module, omit right margin */
@@ -342,9 +343,9 @@ label:focus {
 }
 
 #temperature {
-	background-color: @secondary_fixed;
+	/* background-color: @background; */
 	/* Using a secondary variant */
-	color: @on_secondary_fixed;
+	/* color: @on_secondary_fixed; */
 }
 
 #temperature.critical {

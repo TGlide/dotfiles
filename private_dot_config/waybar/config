@@ -19,8 +19,7 @@
         //"custom/rofi",
         "niri/workspaces",
         //"hyprland/submap",
-        "temperature",
-        //"idle_inhibitor",
+        "idle_inhibitor",
         //"mpd"
         "custom/spotify"
     ],
@@ -32,13 +31,12 @@
     ],
     "modules-right": [
         "backlight",
+				"temperature",
         //"custom/storage",
-        "memory",
-        "cpu",
-        // "battery",
+         "battery",
+				 "power-profiles-daemon",
         //"pulseaudio",
         "wireplumber",
-        "custom/screenshot_t",
         "tray",
         "custom/power"
     ],
@@ -47,6 +45,18 @@
     // -------------------------------------------------------------------------
     // Modules
     // -------------------------------------------------------------------------
+
+		"power-profiles-daemon": {
+			"format": "{icon}",
+			"tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+			"tooltip": true,
+			"format-icons": {
+				"default": "",
+				"performance": "",
+				"balanced": "",
+				"power-saver": ""
+			}
+		},
 
     "custom/sp1": {
         "format": " | ",
