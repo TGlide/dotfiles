@@ -20,8 +20,9 @@
         "niri/workspaces",
         //"hyprland/submap",
         "idle_inhibitor",
+				"network"
         //"mpd"
-        "custom/spotify"
+        //"custom/spotify"
     ],
     "modules-center": [
         //"hyprland/window"

@@ -105,6 +105,8 @@ button:hover {
 #memory,
 #disk,
 #temperature,
+#network,
+#idle_inhibitor,
 #backlight,
 #network,
 #pulseaudio,
@@ -315,7 +317,7 @@ label:focus {
 }
 
 #network {
-	color: @primary_container;
+	/* color: @primary_container; */
 	/* Using a primary container */
 }
 
