@@ -10,6 +10,8 @@ set -gx PATH "/opt/rocm/bin" $PATH
 set --export VOLTA_HOME "$HOME/.volta"
 set --export PATH "$VOLTA_HOME/bin" $PATH
 
+set --export EDITOR "nvim"
+
 
 status is-login; and begin
 
