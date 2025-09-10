@@ -257,9 +257,9 @@ layout {
 // This line starts waybar, a commonly used bar for Wayland compositors.
 spawn-at-startup "waybar"
 spawn-at-startup "xwayland-satellite"
-spawn-at-startup "swww-daemon"
 spawn-at-startup "sh" "-c" "~/.config/niri/niri-watcher.sh"
 spawn-at-startup "sh" "-c" "matugen image $(~/scripts/random-wallpaper.sh)"
+spawn-at-startup "sh" "-c" "niri-update-status"
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.

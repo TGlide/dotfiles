@@ -1,12 +1,7 @@
 [config.wallpaper]
-command = "swww"
-arguments = ["img", "--transition-type", "random", "--transition-fps", "144"]
+command = "swaybg"
+arguments = ["-m", "fill", "-i"]
 set = true
-
-# [config.wallpaper]
-# command = "swaybg"
-# arguments = ["-m", "fill", "-i"]
-# set = true
 
 
 [templates.waybar]
