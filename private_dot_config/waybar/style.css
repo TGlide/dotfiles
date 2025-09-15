@@ -272,7 +272,7 @@ button:hover {
 #battery.charging,
 #battery.full,
 #battery.plugged {
-	color: @on_primary;
+	color: @primary_fixed;
 	/* Using on_primary for positive battery states */
 }
 
