@@ -4,11 +4,11 @@ arguments = ["-m", "fill", "-i"]
 set = true
 
 
-[templates.waybar]
-input_path = './templates/waybar-colors.css'
-output_path = '~/.config/waybar/colors.css'
-post_hook = 'pkill -SIGUSR2 waybar'
-
+# [templates.waybar]
+# input_path = './templates/waybar-colors.css'
+# output_path = '~/.config/waybar/colors.css'
+# post_hook = 'pkill -SIGUSR2 waybar'
+ 
 [templates.hyprland]
 input_path = './templates/hyprland-colors.conf'
 output_path = '~/.config/hypr/config/colors.conf'
