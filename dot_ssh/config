@@ -8,3 +8,10 @@ Host github.com
 	User git
 	IdentityFile ~/.ssh/github
 	AddKeysToAgent yes
+
+Host hf.co
+	HostName hf.co
+	User git
+	IdentityFile ~/.ssh/github
+	AddKeysToAgent yes
+
