@@ -19,7 +19,7 @@ Item {
         spacing: Theme.spacingXS
 
         StyledText {
-            text: "Notifications"
+            text: I18n.tr("Notifications")
             font.pixelSize: Theme.fontSizeLarge
             color: Theme.surfaceText
             font.weight: Font.Medium
@@ -53,7 +53,7 @@ Item {
                 StyledText {
                     id: tooltipText
 
-                    text: "Do Not Disturb"
+                    text: I18n.tr("Do Not Disturb")
                     font.pixelSize: Theme.fontSizeSmall
                     color: Theme.surfaceText
                     font.weight: Font.Medium
@@ -106,9 +106,7 @@ Item {
             height: 28
             radius: Theme.cornerRadius
             visible: NotificationService.notifications.length > 0
-            color: clearArea.containsMouse ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.12) : Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.3)
-            border.color: clearArea.containsMouse ? Theme.primary : Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.08)
-            border.width: 1
+            color: clearArea.containsMouse ? Theme.primaryHoverLight : Theme.surfaceContainerHigh
 
             Row {
                 anchors.centerIn: parent
@@ -122,7 +120,7 @@ Item {
                 }
 
                 StyledText {
-                    text: "Clear All"
+                    text: I18n.tr("Clear All")
                     font.pixelSize: Theme.fontSizeSmall
                     color: clearArea.containsMouse ? Theme.primary : Theme.surfaceText
                     font.weight: Font.Medium
@@ -139,19 +137,6 @@ Item {
                 onClicked: NotificationService.clearAllNotifications()
             }
 
-            Behavior on color {
-                ColorAnimation {
-                    duration: Theme.shortDuration
-                    easing.type: Theme.standardEasing
-                }
-            }
-
-            Behavior on border.color {
-                ColorAnimation {
-                    duration: Theme.shortDuration
-                    easing.type: Theme.standardEasing
-                }
-            }
         }
     }
 }

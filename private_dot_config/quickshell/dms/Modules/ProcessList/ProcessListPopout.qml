@@ -15,7 +15,6 @@ DankPopout {
     id: processListPopout
 
     property var parentWidget: null
-    property string triggerSection: "right"
     property var triggerScreen: null
 
     function setTriggerPosition(x, y, width, section, screen) {
@@ -40,9 +39,9 @@ DankPopout {
     popupWidth: 600
     popupHeight: 600
     triggerX: Screen.width - 600 - Theme.spacingL
-    triggerY: Theme.barHeight - 4 + SettingsData.topBarSpacing + Theme.spacingXS
+    triggerY: Math.max(26 + SettingsData.dankBarInnerPadding + 4, Theme.barHeight - 4 - (8 - SettingsData.dankBarInnerPadding)) + SettingsData.dankBarSpacing + SettingsData.dankBarBottomGap - 2
     triggerWidth: 55
-    positioning: "center"
+    positioning: ""
     screen: triggerScreen
     visible: shouldBeVisible
     shouldBeVisible: false
@@ -62,7 +61,7 @@ DankPopout {
             radius: Theme.cornerRadius
             color: Theme.popupBackground()
             border.color: Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.08)
-            border.width: 1
+            border.width: 0
             clip: true
             antialiasing: true
             smooth: true
@@ -100,9 +99,9 @@ DankPopout {
                     Layout.fillWidth: true
                     height: systemOverview.height + Theme.spacingM * 2
                     radius: Theme.cornerRadius
-                    color: Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.2)
+                    color: Theme.surfaceContainerHigh
                     border.color: Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.08)
-                    border.width: 1
+                    border.width: 0
 
                     SystemOverview {
                         id: systemOverview
@@ -117,9 +116,9 @@ DankPopout {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     radius: Theme.cornerRadius
-                    color: Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.1)
+                    color: Theme.surfaceContainerHigh
                     border.color: Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.05)
-                    border.width: 1
+                    border.width: 0
 
                     ProcessListView {
                         anchors.fill: parent

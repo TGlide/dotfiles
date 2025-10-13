@@ -15,6 +15,7 @@ Item {
     property bool fontsEnumerated: false
 
     signal settingsRequested()
+    signal findRequested()
 
     function enumerateFonts() {
         var fonts = ["Default"]
@@ -118,7 +119,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: -Theme.spacingXS
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "Notepad Font Settings"
+                    text: I18n.tr("Notepad Font Settings")
                     font.pixelSize: Theme.fontSizeMedium
                     font.weight: Font.Medium
                     color: Theme.surfaceText
@@ -135,7 +136,7 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: -Theme.spacingM
                 width: parent.width + Theme.spacingM
-                text: "Use Monospace Font"
+                text: I18n.tr("Use Monospace Font")
                 description: "Toggle fonts"
                 checked: SettingsData.notepadUseMonospace
                 onToggled: checked => {
@@ -147,11 +148,61 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: -Theme.spacingM
                 width: parent.width + Theme.spacingM
-                text: "Show Line Numbers"
+                text: I18n.tr("Show Line Numbers")
                 description: "Display line numbers in editor"
                 checked: SettingsData.notepadShowLineNumbers
                 onToggled: checked => {
                     SettingsData.notepadShowLineNumbers = checked
+                }
+            }
+
+            StyledRect {
+                width: parent.width
+                height: 60
+                radius: Theme.cornerRadius
+                color: "transparent"
+
+                StateLayer {
+                    anchors.fill: parent
+                    anchors.leftMargin: -Theme.spacingM
+                    width: parent.width + Theme.spacingM
+                    stateColor: Theme.primary
+                    cornerRadius: parent.radius
+                    onClicked: root.findRequested()
+                }
+
+                Row {
+                    anchors.left: parent.left
+                    anchors.leftMargin: -Theme.spacingM
+                    anchors.right: parent.right
+                    anchors.rightMargin: Theme.spacingM
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: Theme.spacingM
+
+                    DankIcon {
+                        name: "search"
+                        size: Theme.iconSize - 2
+                        color: Theme.primary
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    Column {
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: Theme.spacingXS
+
+                        StyledText {
+                            text: I18n.tr("Find in Text")
+                            font.pixelSize: Theme.fontSizeMedium
+                            font.weight: Font.Medium
+                            color: Theme.surfaceText
+                        }
+
+                        StyledText {
+                            text: I18n.tr("Open search bar to find text")
+                            font.pixelSize: Theme.fontSizeSmall
+                            color: Theme.surfaceVariantText
+                        }
+                    }
                 }
             }
 
@@ -163,10 +214,10 @@ Item {
 
                 DankDropdown {
                     id: fontDropdown
-                    anchors.left: parent.left
+                    anchors.left: parent.left 
                     anchors.leftMargin: -Theme.spacingM
                     width: parent.width + Theme.spacingM
-                    text: "Font Family"
+                    text: I18n.tr("Font Family")
                     options: cachedFontFamilies
                     currentValue: {
                         if (!SettingsData.notepadFontFamily || SettingsData.notepadFontFamily === "")
@@ -200,7 +251,7 @@ Item {
                         spacing: Theme.spacingXS
 
                         StyledText {
-                            text: "Font Size"
+                            text: I18n.tr("Font Size")
                             font.pixelSize: Theme.fontSizeSmall
                             font.weight: Font.Medium
                             color: Theme.surfaceText
@@ -279,7 +330,7 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: -Theme.spacingM
                         width: parent.width + Theme.spacingM
-                        text: "Custom Transparency"
+                        text: I18n.tr("Custom Transparency")
                         description: "Override global transparency for Notepad"
                         checked: SettingsData.notepadTransparencyOverride >= 0
                         onToggled: checked => {

@@ -18,24 +18,32 @@ DankModal {
     function show() {
         spotlightOpen = true
         open()
-        if (contentLoader.item && contentLoader.item.appLauncher) {
-            contentLoader.item.appLauncher.searchQuery = ""
-        }
 
         Qt.callLater(() => {
-                         if (contentLoader.item && contentLoader.item.searchField) {
-                             contentLoader.item.searchField.forceActiveFocus()
-                         }
-                     })
+            if (contentLoader.item && contentLoader.item.searchField) {
+                contentLoader.item.searchField.forceActiveFocus()
+            }
+        })
     }
 
     function hide() {
         spotlightOpen = false
         close()
-        if (contentLoader.item && contentLoader.item.appLauncher) {
-            contentLoader.item.appLauncher.searchQuery = ""
-            contentLoader.item.appLauncher.selectedIndex = 0
-            contentLoader.item.appLauncher.setCategory("All")
+    }
+
+    onDialogClosed: {
+        if (contentLoader.item) {
+            if (contentLoader.item.appLauncher) {
+                contentLoader.item.appLauncher.searchQuery = ""
+                contentLoader.item.appLauncher.selectedIndex = 0
+                contentLoader.item.appLauncher.setCategory(I18n.tr("All"))
+            }
+            if (contentLoader.item.resetScroll) {
+                contentLoader.item.resetScroll()
+            }
+            if (contentLoader.item.searchField) {
+                contentLoader.item.searchField.text = ""
+            }
         }
     }
 
@@ -49,12 +57,13 @@ DankModal {
 
     shouldBeVisible: spotlightOpen
     width: 550
-    height: 600
+    height: 700
     backgroundColor: Theme.popupBackground()
     cornerRadius: Theme.cornerRadius
     borderColor: Theme.outlineMedium
     borderWidth: 1
     enableShadow: true
+    keepContentLoaded: true
     onVisibleChanged: () => {
                           if (visible && !spotlightOpen) {
                               show()

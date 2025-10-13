@@ -20,7 +20,9 @@ Column {
     signal spacerSizeChanged(string sectionId, int widgetIndex, int newSize)
     signal compactModeChanged(string widgetId, var value)
     signal gpuSelectionChanged(string sectionId, int widgetIndex, int selectedIndex)
+    signal diskMountSelectionChanged(string sectionId, int widgetIndex, string mountPath)
     signal controlCenterSettingChanged(string sectionId, int widgetIndex, string settingName, bool value)
+    signal minimumWidthChanged(string sectionId, int widgetIndex, bool enabled)
 
     width: parent.width
     height: implicitHeight
@@ -81,7 +83,7 @@ Column {
                                    Theme.surfaceContainer.b, 0.8)
                     border.color: Qt.rgba(Theme.outline.r, Theme.outline.g,
                                           Theme.outline.b, 0.2)
-                    border.width: 1
+                    border.width: 0
 
                     DankIcon {
                         name: "drag_indicator"
@@ -141,13 +143,14 @@ Column {
                         spacing: Theme.spacingXS
 
                         Item {
-                            width: 120
+                            width: 60
                             height: 32
                             visible: modelData.id === "gpuTemp"
 
                             DankDropdown {
                                 id: gpuDropdown
                                 anchors.fill: parent
+                                popupWidth: -1
                                 currentValue: {
                                     var selectedIndex = modelData.selectedGpuIndex
                                             !== undefined ? modelData.selectedGpuIndex : 0
@@ -188,14 +191,41 @@ Column {
                         }
 
                         Item {
+                            width: 120
+                            height: 32
+                            visible: modelData.id === "diskUsage"
+                            DankDropdown {
+                                id: diskMountDropdown
+                                anchors.fill: parent
+                                currentValue: {
+                                    const mountPath = modelData.mountPath || "/"
+                                    if (mountPath === "/") {
+                                        return "root (/)"
+                                    }
+                                    return mountPath
+                                }
+                                options: {
+                                    if (!DgopService.diskMounts || DgopService.diskMounts.length === 0) {
+                                        return ["root (/)"]
+                                    }
+                                    return DgopService.diskMounts.map(mount => {
+                                        if (mount.mount === "/") {
+                                            return "root (/)"
+                                        }
+                                        return mount.mount
+                                    })
+                                }
+                                onValueChanged: value => {
+                                    const newPath = value === "root (/)" ? "/" : value
+                                    root.diskMountSelectionChanged(root.sectionId, index, newPath)
+                                }
+                            }
+                        }
+
+                        Item {
                             width: 32
                             height: 32
-                            visible: (modelData.warning !== undefined
-                                      && modelData.warning !== "")
-                                     && (modelData.id === "cpuUsage"
-                                         || modelData.id === "memUsage"
-                                         || modelData.id === "cpuTemp"
-                                         || modelData.id === "gpuTemp")
+                            visible: modelData.warning !== undefined && modelData.warning !== ""
 
                             DankIcon {
                                 name: "warning"
@@ -226,7 +256,7 @@ Column {
                                 radius: Theme.cornerRadius
                                 color: Theme.surfaceContainer
                                 border.color: Theme.outline
-                                border.width: 1
+                                border.width: 0
                                 visible: warningArea.containsMouse
                                          && warningText !== ""
                                 opacity: visible ? 1 : 0
@@ -254,6 +284,37 @@ Column {
                             }
                         }
 
+                        DankActionButton {
+                            id: minimumWidthButton
+                            buttonSize: 28
+                            visible: modelData.id === "cpuUsage"
+                                     || modelData.id === "memUsage"
+                                     || modelData.id === "cpuTemp"
+                                     || modelData.id === "gpuTemp"
+                            iconName: "straighten"
+                            iconSize: 16
+                            iconColor: (modelData.minimumWidth !== undefined ? modelData.minimumWidth : true) ? Theme.primary : Theme.outline
+                            onClicked: {
+                                var currentEnabled = modelData.minimumWidth !== undefined ? modelData.minimumWidth : true
+                                root.minimumWidthChanged(root.sectionId, index, !currentEnabled)
+                            }
+                            onEntered: {
+                                minimumWidthTooltipLoader.active = true
+                                if (minimumWidthTooltipLoader.item) {
+                                    var currentEnabled = modelData.minimumWidth !== undefined ? modelData.minimumWidth : true
+                                    const tooltipText = currentEnabled ? "Force Padding" : "Dynamic Width"
+                                    const p = minimumWidthButton.mapToItem(null, minimumWidthButton.width / 2, 0)
+                                    minimumWidthTooltipLoader.item.show(tooltipText, p.x, p.y - 40, null)
+                                }
+                            }
+                            onExited: {
+                                if (minimumWidthTooltipLoader.item) {
+                                    minimumWidthTooltipLoader.item.hide()
+                                }
+                                minimumWidthTooltipLoader.active = false
+                            }
+                        }
+
                         Row {
                             spacing: Theme.spacingXS
                             visible: modelData.id === "clock"
@@ -272,6 +333,19 @@ Column {
                                 onClicked: {
                                     root.compactModeChanged("music", 0)
                                 }
+                                onEntered: {
+                                    smallTooltipLoader.active = true
+                                    if (smallTooltipLoader.item) {
+                                        const p = smallSizeButton.mapToItem(null, smallSizeButton.width / 2, 0)
+                                        smallTooltipLoader.item.show("Small", p.x, p.y - 40, null)
+                                    }
+                                }
+                                onExited: {
+                                    if (smallTooltipLoader.item) {
+                                        smallTooltipLoader.item.hide()
+                                    }
+                                    smallTooltipLoader.active = false
+                                }
                             }
 
                             DankActionButton {
@@ -285,6 +359,19 @@ Column {
                                 onClicked: {
                                     root.compactModeChanged("music", 1)
                                 }
+                                onEntered: {
+                                    mediumTooltipLoader.active = true
+                                    if (mediumTooltipLoader.item) {
+                                        const p = mediumSizeButton.mapToItem(null, mediumSizeButton.width / 2, 0)
+                                        mediumTooltipLoader.item.show("Medium", p.x, p.y - 40, null)
+                                    }
+                                }
+                                onExited: {
+                                    if (mediumTooltipLoader.item) {
+                                        mediumTooltipLoader.item.hide()
+                                    }
+                                    mediumTooltipLoader.active = false
+                                }
                             }
 
                             DankActionButton {
@@ -297,6 +384,19 @@ Column {
                                            === 2 ? Theme.primary : Theme.outline
                                 onClicked: {
                                     root.compactModeChanged("music", 2)
+                                }
+                                onEntered: {
+                                    largeTooltipLoader.active = true
+                                    if (largeTooltipLoader.item) {
+                                        const p = largeSizeButton.mapToItem(null, largeSizeButton.width / 2, 0)
+                                        largeTooltipLoader.item.show("Large", p.x, p.y - 40, null)
+                                    }
+                                }
+                                onExited: {
+                                    if (largeTooltipLoader.item) {
+                                        largeTooltipLoader.item.hide()
+                                    }
+                                    largeTooltipLoader.active = false
                                 }
                             }
 
@@ -340,6 +440,27 @@ Column {
                                                     !SettingsData.runningAppsCompactMode)
                                     }
                                 }
+                                onEntered: {
+                                    compactTooltipLoader.active = true
+                                    if (compactTooltipLoader.item) {
+                                        let tooltipText = "Toggle Compact Mode"
+                                        if (modelData.id === "clock") {
+                                            tooltipText = SettingsData.clockCompactMode ? "Full Size" : "Compact"
+                                        } else if (modelData.id === "focusedWindow") {
+                                            tooltipText = SettingsData.focusedWindowCompactMode ? "Full Size" : "Compact"
+                                        } else if (modelData.id === "runningApps") {
+                                            tooltipText = SettingsData.runningAppsCompactMode ? "Full Size" : "Compact"
+                                        }
+                                        const p = compactModeButton.mapToItem(null, compactModeButton.width / 2, 0)
+                                        compactTooltipLoader.item.show(tooltipText, p.x, p.y - 40, null)
+                                    }
+                                }
+                                onExited: {
+                                    if (compactTooltipLoader.item) {
+                                        compactTooltipLoader.item.hide()
+                                    }
+                                    compactTooltipLoader.active = false
+                                }
                             }
 
                             Rectangle {
@@ -349,7 +470,7 @@ Column {
                                 radius: Theme.cornerRadius
                                 color: Theme.surfaceContainer
                                 border.color: Theme.outline
-                                border.width: 1
+                                border.width: 0
                                 visible: false
                                 opacity: visible ? 1 : 0
                                 x: -width - Theme.spacingS
@@ -359,7 +480,7 @@ Column {
                                 StyledText {
                                     id: tooltipText
                                     anchors.centerIn: parent
-                                    text: "Compact Mode"
+                                    text: I18n.tr("Compact Mode")
                                     font.pixelSize: Theme.fontSizeSmall
                                     color: Theme.surfaceText
                                 }
@@ -393,6 +514,7 @@ Column {
                         }
 
                         DankActionButton {
+                            id: visibilityButton
                             visible: modelData.id !== "spacer"
                             buttonSize: 32
                             iconName: modelData.enabled ? "visibility" : "visibility_off"
@@ -402,6 +524,20 @@ Column {
                                 root.itemEnabledChanged(root.sectionId,
                                                         modelData.id,
                                                         !modelData.enabled)
+                            }
+                            onEntered: {
+                                visibilityTooltipLoader.active = true
+                                if (visibilityTooltipLoader.item) {
+                                    const tooltipText = modelData.enabled ? "Hide" : "Show"
+                                    const p = visibilityButton.mapToItem(null, visibilityButton.width / 2, 0)
+                                    visibilityTooltipLoader.item.show(tooltipText, p.x, p.y - 40, null)
+                                }
+                            }
+                            onExited: {
+                                if (visibilityTooltipLoader.item) {
+                                    visibilityTooltipLoader.item.hide()
+                                }
+                                visibilityTooltipLoader.active = false
                             }
                         }
 
@@ -527,11 +663,11 @@ Column {
                                                  Theme.surfaceVariant.b, 0.3)
         border.color: Qt.rgba(Theme.outline.r, Theme.outline.g,
                               Theme.outline.b, 0.2)
-        border.width: 1
+        border.width: 0
         anchors.horizontalCenter: parent.horizontalCenter
 
         StyledText {
-            text: "Add Widget"
+            text: I18n.tr("Add Widget")
             font.pixelSize: Theme.fontSizeSmall
             font.weight: Font.Medium
             color: Theme.primary
@@ -585,7 +721,7 @@ Column {
             color: Theme.popupBackground()
             radius: Theme.cornerRadius
             border.color: Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.08)
-            border.width: 1
+            border.width: 0
         }
 
         contentItem: Item {
@@ -616,7 +752,7 @@ Column {
                         }
 
                         StyledText {
-                            text: "Network Icon"
+                            text: I18n.tr("Network Icon")
                             font.pixelSize: Theme.fontSizeSmall
                             color: Theme.surfaceText
                             font.weight: Font.Normal
@@ -669,7 +805,7 @@ Column {
                         }
 
                         StyledText {
-                            text: "Bluetooth Icon"
+                            text: I18n.tr("Bluetooth Icon")
                             font.pixelSize: Theme.fontSizeSmall
                             color: Theme.surfaceText
                             font.weight: Font.Normal
@@ -722,7 +858,7 @@ Column {
                         }
 
                         StyledText {
-                            text: "Audio Icon"
+                            text: I18n.tr("Audio Icon")
                             font.pixelSize: Theme.fontSizeSmall
                             color: Theme.surfaceText
                             font.weight: Font.Normal
@@ -757,5 +893,41 @@ Column {
             }
 
         }
+    }
+
+    Loader {
+        id: smallTooltipLoader
+        active: false
+        sourceComponent: DankTooltip {}
+    }
+
+    Loader {
+        id: mediumTooltipLoader
+        active: false
+        sourceComponent: DankTooltip {}
+    }
+
+    Loader {
+        id: largeTooltipLoader
+        active: false
+        sourceComponent: DankTooltip {}
+    }
+
+    Loader {
+        id: compactTooltipLoader
+        active: false
+        sourceComponent: DankTooltip {}
+    }
+
+    Loader {
+        id: visibilityTooltipLoader
+        active: false
+        sourceComponent: DankTooltip {}
+    }
+
+    Loader {
+        id: minimumWidthTooltipLoader
+        active: false
+        sourceComponent: DankTooltip {}
     }
 }

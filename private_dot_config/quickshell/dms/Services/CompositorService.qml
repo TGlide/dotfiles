@@ -80,8 +80,15 @@ Singleton {
         return ToplevelManager.toplevels.values
     }
 
-    Component.onCompleted: {
-        detectCompositor()
+    Timer {
+        id: compositorInitTimer
+        interval: 100
+        running: true
+        repeat: false
+        onTriggered: {
+            detectCompositor()
+            Qt.callLater(() => NiriService.generateNiriLayoutConfig())
+        }
     }
 
     function filterCurrentWorkspace(toplevels, screen) {
@@ -192,6 +199,7 @@ Singleton {
                 root.isHyprland = false
                 root.compositor = "niri"
                 console.log("CompositorService: Detected Niri with socket:", root.niriSocket)
+                NiriService.generateNiriBinds()
             } else {
                 root.isHyprland = false
                 root.isNiri = true

@@ -7,6 +7,7 @@ import qs.Widgets
 DankFlickable {
     anchors.fill: parent
     contentHeight: systemColumn.implicitHeight
+    clip: true
     Component.onCompleted: {
         DgopService.addRef(["system", "hardware", "diskmounts"]);
     }
@@ -24,7 +25,7 @@ DankFlickable {
             width: parent.width
             height: systemInfoColumn.implicitHeight + 2 * Theme.spacingL
             radius: Theme.cornerRadius
-            color: Qt.rgba(Theme.surfaceContainer.r, Theme.surfaceContainer.g, Theme.surfaceContainer.b, 0.6)
+            color: Theme.surfaceContainerHigh
             border.width: 0
 
             Column {
@@ -68,7 +69,7 @@ DankFlickable {
                         }
 
                         StyledText {
-                            text: `Up ${UserInfoService.uptime} • Boot: ${DgopService.bootTime}`
+                            text: `${UserInfoService.uptime} • Boot: ${DgopService.bootTime}`
                             font.pixelSize: Theme.fontSizeSmall
                             font.family: SettingsData.monoFontFamily
                             color: Qt.rgba(Theme.surfaceText.r, Theme.surfaceText.g, Theme.surfaceText.b, 0.6)
@@ -126,7 +127,7 @@ DankFlickable {
                                 }
 
                                 StyledText {
-                                    text: "System"
+                                    text: I18n.tr("System")
                                     font.pixelSize: Theme.fontSizeSmall
                                     font.family: SettingsData.monoFontFamily
                                     font.weight: Font.Bold
@@ -386,7 +387,7 @@ DankFlickable {
             width: parent.width
             height: storageColumn.implicitHeight + 2 * Theme.spacingL
             radius: Theme.cornerRadius
-            color: Qt.rgba(Theme.surfaceContainer.r, Theme.surfaceContainer.g, Theme.surfaceContainer.b, 0.6)
+            color: Theme.surfaceContainerHigh
             border.width: 0
 
             Column {
@@ -410,7 +411,7 @@ DankFlickable {
                     }
 
                     StyledText {
-                        text: "Storage & Disks"
+                        text: I18n.tr("Storage & Disks")
                         font.pixelSize: Theme.fontSizeLarge
                         font.family: SettingsData.monoFontFamily
                         font.weight: Font.Bold
@@ -430,7 +431,7 @@ DankFlickable {
                         spacing: Theme.spacingS
 
                         StyledText {
-                            text: "Device"
+                            text: I18n.tr("Device")
                             font.pixelSize: Theme.fontSizeSmall
                             font.family: SettingsData.monoFontFamily
                             font.weight: Font.Bold
@@ -441,7 +442,7 @@ DankFlickable {
                         }
 
                         StyledText {
-                            text: "Mount"
+                            text: I18n.tr("Mount")
                             font.pixelSize: Theme.fontSizeSmall
                             font.family: SettingsData.monoFontFamily
                             font.weight: Font.Bold
@@ -452,7 +453,7 @@ DankFlickable {
                         }
 
                         StyledText {
-                            text: "Size"
+                            text: I18n.tr("Size")
                             font.pixelSize: Theme.fontSizeSmall
                             font.family: SettingsData.monoFontFamily
                             font.weight: Font.Bold
@@ -463,7 +464,7 @@ DankFlickable {
                         }
 
                         StyledText {
-                            text: "Used"
+                            text: I18n.tr("Used")
                             font.pixelSize: Theme.fontSizeSmall
                             font.family: SettingsData.monoFontFamily
                             font.weight: Font.Bold
@@ -474,7 +475,7 @@ DankFlickable {
                         }
 
                         StyledText {
-                            text: "Available"
+                            text: I18n.tr("Available")
                             font.pixelSize: Theme.fontSizeSmall
                             font.family: SettingsData.monoFontFamily
                             font.weight: Font.Bold
@@ -485,7 +486,7 @@ DankFlickable {
                         }
 
                         StyledText {
-                            text: "Use%"
+                            text: I18n.tr("Use%")
                             font.pixelSize: Theme.fontSizeSmall
                             font.family: SettingsData.monoFontFamily
                             font.weight: Font.Bold

@@ -15,6 +15,7 @@ Item {
 
     signal clicked
     signal toggled(bool checked)
+    signal toggleCompleted(bool checked)
 
     readonly property bool showText: text && !hideText
 
@@ -36,7 +37,7 @@ Item {
         id: background
         anchors.fill: parent
         radius: showText ? Theme.cornerRadius : 0
-        color: showText ? Theme.surfaceHover : "transparent"
+        color: "transparent"
         visible: showText
 
         StateLayer {
@@ -113,10 +114,17 @@ Item {
             x: (checked && enabled) ? toggleTrack.edgeRight : toggleTrack.edgeLeft
 
             Behavior on x {
-                NumberAnimation {
-                    duration: Appearance.anim.durations.normal
-                    easing.type: Easing.BezierSpline
-                    easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+                SequentialAnimation {
+                    NumberAnimation {
+                        duration: Appearance.anim.durations.normal
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: Appearance.anim.curves.emphasizedDecel
+                    }
+                    ScriptAction {
+                        script: {
+                            toggle.toggleCompleted(toggle.checked)
+                        }
+                    }
                 }
             }
 

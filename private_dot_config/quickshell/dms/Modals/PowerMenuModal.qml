@@ -9,31 +9,47 @@ DankModal {
 
     property int selectedIndex: 0
     property int optionCount: SessionService.hibernateSupported ? 5 : 4
+    property rect parentBounds: Qt.rect(0, 0, 0, 0)
+    property var parentScreen: null
 
     signal powerActionRequested(string action, string title, string message)
+
+    function openCentered() {
+        parentBounds = Qt.rect(0, 0, 0, 0)
+        parentScreen = null
+        backgroundOpacity = 0.5
+        open()
+    }
+
+    function openFromControlCenter(bounds, targetScreen) {
+        parentBounds = bounds
+        parentScreen = targetScreen
+        backgroundOpacity = 0
+        open()
+    }
 
     function selectOption(action) {
         close();
         const actions = {
             "logout": {
-                "title": "Log Out",
-                "message": "Are you sure you want to log out?"
+                "title": I18n.tr("Log Out"),
+                "message": I18n.tr("Are you sure you want to log out?")
             },
             "suspend": {
-                "title": "Suspend",
-                "message": "Are you sure you want to suspend the system?"
+                "title": I18n.tr("Suspend"),
+                "message": I18n.tr("Are you sure you want to suspend the system?")
             },
             "hibernate": {
-                "title": "Hibernate",
-                "message": "Are you sure you want to hibernate the system?"
+                "title": I18n.tr("Hibernate"),
+                "message": I18n.tr("Are you sure you want to hibernate the system?")
             },
             "reboot": {
-                "title": "Reboot",
-                "message": "Are you sure you want to reboot the system?"
+                "title": I18n.tr("Reboot"),
+                "message": I18n.tr("Are you sure you want to reboot the system?")
             },
             "poweroff": {
-                "title": "Power Off",
-                "message": "Are you sure you want to power off the system?"
+                "title": I18n.tr("Power Off"),
+                "message": I18n.tr("Are you sure you want to power off the system?")
             }
         }
         const selected = actions[action]
@@ -47,23 +63,31 @@ DankModal {
     width: 320
     height: contentLoader.item ? contentLoader.item.implicitHeight : 300
     enableShadow: true
+    screen: parentScreen
+    positioning: parentBounds.width > 0 ? "custom" : "center"
+    customPosition: {
+        if (parentBounds.width > 0) {
+            const centerX = parentBounds.x + (parentBounds.width - width) / 2
+            const centerY = parentBounds.y + (parentBounds.height - height) / 2
+            return Qt.point(centerX, centerY)
+        }
+        return Qt.point(0, 0)
+    }
     onBackgroundClicked: () => {
         return close();
     }
     onOpened: () => {
         selectedIndex = 0;
-        modalFocusScope.forceActiveFocus();
+        Qt.callLater(() => modalFocusScope.forceActiveFocus());
     }
     modalFocusScope.Keys.onPressed: (event) => {
         switch (event.key) {
         case Qt.Key_Up:
+        case Qt.Key_Backtab:
             selectedIndex = (selectedIndex - 1 + optionCount) % optionCount;
             event.accepted = true;
             break;
         case Qt.Key_Down:
-            selectedIndex = (selectedIndex + 1) % optionCount;
-            event.accepted = true;
-            break;
         case Qt.Key_Tab:
             selectedIndex = (selectedIndex + 1) % optionCount;
             event.accepted = true;
@@ -77,6 +101,30 @@ DankModal {
                 selectOption(actions[selectedIndex]);
             }
             event.accepted = true;
+            break;
+        case Qt.Key_N:
+            if (event.modifiers & Qt.ControlModifier) {
+                selectedIndex = (selectedIndex + 1) % optionCount;
+                event.accepted = true;
+            }
+            break;
+        case Qt.Key_P:
+            if (event.modifiers & Qt.ControlModifier) {
+                selectedIndex = (selectedIndex - 1 + optionCount) % optionCount;
+                event.accepted = true;
+            }
+            break;
+        case Qt.Key_J:
+            if (event.modifiers & Qt.ControlModifier) {
+                selectedIndex = (selectedIndex + 1) % optionCount;
+                event.accepted = true;
+            }
+            break;
+        case Qt.Key_K:
+            if (event.modifiers & Qt.ControlModifier) {
+                selectedIndex = (selectedIndex - 1 + optionCount) % optionCount;
+                event.accepted = true;
+            }
             break;
         }
     }
@@ -96,7 +144,7 @@ DankModal {
                     width: parent.width
 
                     StyledText {
-                        text: "Power Options"
+                        text: I18n.tr("Power Options")
                         font.pixelSize: Theme.fontSizeLarge
                         color: Theme.surfaceText
                         font.weight: Font.Medium
@@ -153,7 +201,7 @@ DankModal {
                             }
 
                             StyledText {
-                                text: "Log Out"
+                                text: I18n.tr("Log Out")
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: Theme.surfaceText
                                 font.weight: Font.Medium
@@ -206,7 +254,7 @@ DankModal {
                             }
 
                             StyledText {
-                                text: "Suspend"
+                                text: I18n.tr("Suspend")
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: Theme.surfaceText
                                 font.weight: Font.Medium
@@ -260,7 +308,7 @@ DankModal {
                             }
 
                             StyledText {
-                                text: "Hibernate"
+                                text: I18n.tr("Hibernate")
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: Theme.surfaceText
                                 font.weight: Font.Medium
@@ -314,7 +362,7 @@ DankModal {
                             }
 
                             StyledText {
-                                text: "Reboot"
+                                text: I18n.tr("Reboot")
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: rebootArea.containsMouse ? Theme.warning : Theme.surfaceText
                                 font.weight: Font.Medium
@@ -368,7 +416,7 @@ DankModal {
                             }
 
                             StyledText {
-                                text: "Power Off"
+                                text: I18n.tr("Power Off")
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: powerOffArea.containsMouse ? Theme.error : Theme.surfaceText
                                 font.weight: Font.Medium

@@ -8,6 +8,7 @@ import qs.Widgets
 
 Card {
     id: root
+    clip: false
 
     signal clicked()
 
@@ -52,7 +53,7 @@ Card {
         }
 
         StyledText {
-            text: "No media, loser"
+            text: I18n.tr("No Media")
             font.pixelSize: Theme.fontSizeSmall
             color: Qt.rgba(Theme.surfaceText.r, Theme.surfaceText.g, Theme.surfaceText.b, 0.7)
             anchors.horizontalCenter: parent.horizontalCenter
@@ -65,13 +66,20 @@ Card {
         spacing: Theme.spacingL
         visible: activePlayer
 
-        DankAlbumArt {
-            width: 110
-            height: 80
+        Item {
+            width: 140
+            height: 110
             anchors.horizontalCenter: parent.horizontalCenter
-            activePlayer: root.activePlayer
-            albumSize: 76
-            animationScale: 1.05
+            clip: false
+
+            DankAlbumArt {
+                width: 110
+                height: 80
+                anchors.centerIn: parent
+                activePlayer: root.activePlayer
+                albumSize: 76
+                animationScale: 1.05
+            }
         }
 
         Column {
@@ -123,7 +131,7 @@ Card {
                 height: 28
                 radius: 14
                 anchors.verticalCenter: playPauseButton.verticalCenter
-                color: prevArea.containsMouse ? Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.12) : "transparent"
+                color: prevArea.containsMouse ? Theme.surfaceContainerHigh : "transparent"
 
                 DankIcon {
                     anchors.centerIn: parent
@@ -175,7 +183,7 @@ Card {
                 height: 28
                 radius: 14
                 anchors.verticalCenter: playPauseButton.verticalCenter
-                color: nextArea.containsMouse ? Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.12) : "transparent"
+                color: nextArea.containsMouse ? Theme.surfaceContainerHigh : "transparent"
 
                 DankIcon {
                     anchors.centerIn: parent

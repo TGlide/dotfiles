@@ -6,6 +6,17 @@ import qs.Widgets
 StyledRect {
     id: root
 
+    activeFocusOnTab: true
+
+    KeyNavigation.tab: keyNavigationTab
+    KeyNavigation.backtab: keyNavigationBacktab
+
+    onActiveFocusChanged: {
+        if (activeFocus) {
+            textInput.forceActiveFocus()
+        }
+    }
+
     property alias text: textInput.text
     property string placeholderText: ""
     property alias font: textInput.font
@@ -31,7 +42,10 @@ StyledRect {
     property real topPadding: Theme.spacingM
     property real bottomPadding: Theme.spacingM
     property bool ignoreLeftRightKeys: false
+    property bool ignoreTabKeys: false
     property var keyForwardTargets: []
+    property Item keyNavigationTab: null
+    property Item keyNavigationBacktab: null
 
     signal textEdited
     signal editingFinished
@@ -89,11 +103,14 @@ StyledRect {
         verticalAlignment: TextInput.AlignVCenter
         selectByMouse: !root.ignoreLeftRightKeys
         clip: true
+        activeFocusOnTab: true
+        KeyNavigation.tab: root.keyNavigationTab
+        KeyNavigation.backtab: root.keyNavigationBacktab
         onTextChanged: root.textEdited()
         onEditingFinished: root.editingFinished()
         onAccepted: root.accepted()
         onActiveFocusChanged: root.focusStateChanged(activeFocus)
-        Keys.forwardTo: root.ignoreLeftRightKeys ? root.keyForwardTargets : []
+        Keys.forwardTo: root.keyForwardTargets
         Keys.onLeftPressed: event => {
                                 if (root.ignoreLeftRightKeys) {
                                     event.accepted = true
@@ -106,10 +123,19 @@ StyledRect {
                                  if (root.ignoreLeftRightKeys) {
                                      event.accepted = true
                                  } else {
-                                     // Allow normal TextInput cursor movement
                                      event.accepted = false
                                  }
                              }
+        Keys.onPressed: event => {
+                            if (root.ignoreTabKeys && (event.key === Qt.Key_Tab || event.key === Qt.Key_Backtab)) {
+                                event.accepted = false
+                                for (var i = 0; i < root.keyForwardTargets.length; i++) {
+                                    if (root.keyForwardTargets[i]) {
+                                        root.keyForwardTargets[i].Keys.pressed(event)
+                                    }
+                                }
+                            }
+                        }
 
         MouseArea {
             anchors.fill: parent

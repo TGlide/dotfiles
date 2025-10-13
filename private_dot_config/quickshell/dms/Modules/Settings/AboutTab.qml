@@ -28,11 +28,10 @@ Item {
                 width: parent.width
                 height: asciiSection.implicitHeight + Theme.spacingL * 2
                 radius: Theme.cornerRadius
-                color: Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g,
-                               Theme.surfaceVariant.b, 0.3)
+                color: Theme.surfaceContainerHigh
                 border.color: Qt.rgba(Theme.outline.r, Theme.outline.g,
                                       Theme.outline.b, 0.2)
-                border.width: 1
+                border.width: 0
 
                 Column {
                     id: asciiSection
@@ -57,7 +56,7 @@ Item {
                     }
 
                     StyledText {
-                        text: "DankMaterialShell"
+                        text: SystemUpdateService.shellVersion ? `dms ${SystemUpdateService.shellVersion}` : "dms"
                         font.pixelSize: Theme.fontSizeXLarge
                         font.weight: Font.Bold
                         color: Theme.surfaceText
@@ -225,11 +224,10 @@ Item {
                 width: parent.width
                 height: projectSection.implicitHeight + Theme.spacingL * 2
                 radius: Theme.cornerRadius
-                color: Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g,
-                               Theme.surfaceVariant.b, 0.3)
+                color: Theme.surfaceContainerHigh
                 border.color: Qt.rgba(Theme.outline.r, Theme.outline.g,
                                       Theme.outline.b, 0.2)
-                border.width: 1
+                border.width: 0
 
                 Column {
                     id: projectSection
@@ -250,7 +248,7 @@ Item {
                         }
 
                         StyledText {
-                            text: "About"
+                            text: I18n.tr("About")
                             font.pixelSize: Theme.fontSizeLarge
                             font.weight: Font.Medium
                             color: Theme.surfaceText
@@ -259,8 +257,8 @@ Item {
                     }
 
                     StyledText {
-                        text: `DankMaterialShell is a modern desktop with a <a href="https://m3.material.io/" style="text-decoration:none; color:${Theme.primary};">material</a>-ish design.
-                        <br /><br/>The goal is to provide a high level of functionality and customization so that it can be a suitable replacement for complete desktop environments like Gnome, KDE, or Cosmic.
+                        text: `dms is a highly customizable, modern desktop shell with a <a href="https://m3.material.io/" style="text-decoration:none; color:${Theme.primary};">material 3 inspired</a> design.
+                        <br /><br/>It is built with <a href="https://quickshell.org" style="text-decoration:none; color:${Theme.primary};">Quickshell</a>, a QT6 framework for building desktop shells, and <a href="https://go.dev" style="text-decoration:none; color:${Theme.primary};">Go</a>, a statically typed, compiled programming language.
                         `
                         textFormat: Text.RichText
                         font.pixelSize: Theme.fontSizeMedium
@@ -285,11 +283,10 @@ Item {
                 width: parent.width
                 height: techSection.implicitHeight + Theme.spacingL * 2
                 radius: Theme.cornerRadius
-                color: Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g,
-                               Theme.surfaceVariant.b, 0.3)
+                color: Theme.surfaceContainerHigh
                 border.color: Qt.rgba(Theme.outline.r, Theme.outline.g,
                                       Theme.outline.b, 0.2)
-                border.width: 1
+                border.width: 0
 
                 Column {
                     id: techSection
@@ -310,7 +307,7 @@ Item {
                         }
 
                         StyledText {
-                            text: "Technical Details"
+                            text: I18n.tr("Technical Details")
                             font.pixelSize: Theme.fontSizeLarge
                             font.weight: Font.Medium
                             color: Theme.surfaceText
@@ -325,7 +322,7 @@ Item {
                         rowSpacing: Theme.spacingS
 
                         StyledText {
-                            text: "Framework:"
+                            text: I18n.tr("Framework:")
                             font.pixelSize: Theme.fontSizeMedium
                             font.weight: Font.Medium
                             color: Theme.surfaceText
@@ -348,20 +345,20 @@ Item {
                         }
 
                         StyledText {
-                            text: "Language:"
+                            text: I18n.tr("Language:")
                             font.pixelSize: Theme.fontSizeMedium
                             font.weight: Font.Medium
                             color: Theme.surfaceText
                         }
 
                         StyledText {
-                            text: "QML (Qt Modeling Language)"
+                            text: I18n.tr("QML, JavaScript, Go")
                             font.pixelSize: Theme.fontSizeMedium
                             color: Theme.surfaceVariantText
                         }
 
                         StyledText {
-                            text: "Compositor:"
+                            text: I18n.tr("Compositor:")
                             font.pixelSize: Theme.fontSizeMedium
                             font.weight: Font.Medium
                             color: Theme.surfaceText
@@ -413,7 +410,7 @@ Item {
                         }
 
                         StyledText {
-                            text: "Github:"
+                            text: I18n.tr("Github:")
                             font.pixelSize: Theme.fontSizeMedium
                             font.weight: Font.Medium
                             color: Theme.surfaceText
@@ -440,7 +437,7 @@ Item {
                             }
                             
                             StyledText {
-                                text: "- Support Us With a Star ⭐"
+                                text: I18n.tr("- Support Us With a Star ⭐")
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: Theme.surfaceVariantText
                                 anchors.verticalCenter: parent.verticalCenter
@@ -448,7 +445,7 @@ Item {
                         }
 
                         StyledText {
-                            text: "System Monitoring:"
+                            text: I18n.tr("System Monitoring:")
                             font.pixelSize: Theme.fontSizeMedium
                             font.weight: Font.Medium
                             color: Theme.surfaceText
@@ -475,10 +472,38 @@ Item {
                             }
                             
                             StyledText {
-                                text: "- Stateless System Monitoring"
+                                text: I18n.tr("- Stateless System Monitoring")
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: Theme.surfaceVariantText
                                 anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+
+                        StyledText {
+                            text: I18n.tr("Dank Suite:")
+                            font.pixelSize: Theme.fontSizeMedium
+                            font.weight: Font.Medium
+                            color: Theme.surfaceText
+                        }
+
+                        Row {
+                            spacing: 4
+                            
+                            StyledText {
+                                text: `<a href="https://danklinux.com" style="text-decoration:none; color:${Theme.primary};">danklinux.com</a>`
+                                font.pixelSize: Theme.fontSizeMedium
+                                color: Theme.surfaceVariantText
+                                linkColor: Theme.primary
+                                textFormat: Text.RichText
+                                onLinkActivated: url => Qt.openUrlExternally(url)
+                                anchors.verticalCenter: parent.verticalCenter
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                    acceptedButtons: Qt.NoButton
+                                    propagateComposedEvents: true
+                                }
                             }
                         }
                     }
@@ -510,7 +535,7 @@ Item {
 
         color: Theme.surfaceContainer
         radius: Theme.cornerRadius
-        border.width: 1
+        border.width: 0
         border.color: Theme.outlineMedium
 
         x: hoveredButton ? hoveredButton.mapToItem(aboutTab, hoveredButton.width / 2, 0).x - width / 2 : 0

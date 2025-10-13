@@ -68,9 +68,11 @@ DankModal {
         }
     }
     onOpened: {
-        modalFocusScope.forceActiveFocus()
-        modalFocusScope.focus = true
-        shouldHaveFocus = true
+        Qt.callLater(function () {
+            modalFocusScope.forceActiveFocus()
+            modalFocusScope.focus = true
+            shouldHaveFocus = true
+        })
     }
     modalFocusScope.Keys.onPressed: function (event) {
         switch (event.key) {
@@ -92,6 +94,48 @@ DankModal {
             keyboardNavigation = true
             selectedButton = 1
             event.accepted = true
+            break
+        case Qt.Key_N:
+            if (event.modifiers & Qt.ControlModifier) {
+                keyboardNavigation = true
+                selectedButton = (selectedButton + 1) % 2
+                event.accepted = true
+            }
+            break
+        case Qt.Key_P:
+            if (event.modifiers & Qt.ControlModifier) {
+                keyboardNavigation = true
+                selectedButton = selectedButton === -1 ? 1 : (selectedButton - 1 + 2) % 2
+                event.accepted = true
+            }
+            break
+        case Qt.Key_J:
+            if (event.modifiers & Qt.ControlModifier) {
+                keyboardNavigation = true
+                selectedButton = 1
+                event.accepted = true
+            }
+            break
+        case Qt.Key_K:
+            if (event.modifiers & Qt.ControlModifier) {
+                keyboardNavigation = true
+                selectedButton = 0
+                event.accepted = true
+            }
+            break
+        case Qt.Key_H:
+            if (event.modifiers & Qt.ControlModifier) {
+                keyboardNavigation = true
+                selectedButton = 0
+                event.accepted = true
+            }
+            break
+        case Qt.Key_L:
+            if (event.modifiers & Qt.ControlModifier) {
+                keyboardNavigation = true
+                selectedButton = 1
+                event.accepted = true
+            }
             break
         case Qt.Key_Tab:
             keyboardNavigation = true

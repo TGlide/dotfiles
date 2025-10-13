@@ -14,9 +14,14 @@ import "StockThemes.js" as StockThemes
 Singleton {
     id: root
 
+    readonly property bool envDisableMatugen: Quickshell.env("DMS_DISABLE_MATUGEN") === "1" || Quickshell.env("DMS_DISABLE_MATUGEN") === "true"
+
+    // ! TODO - Synchronize with niri/hyprland gaps?
+    readonly property real popupDistance: 2
+
     property string currentTheme: "blue"
     property string currentThemeCategory: "generic"
-    property bool isLightMode: false
+    property bool isLightMode: typeof SessionData !== "undefined" ? SessionData.isLightMode : false
 
     readonly property string dynamic: "dynamic"
     readonly property string custom : "custom"
@@ -26,9 +31,8 @@ Singleton {
     readonly property string shellDir: Paths.strip(Qt.resolvedUrl(".").toString()).replace("/Common/", "")
     readonly property string wallpaperPath: {
         if (typeof SessionData === "undefined") return ""
-        
+
         if (SessionData.perMonitorWallpaper) {
-            // Use first monitor's wallpaper for dynamic theming
             var screens = Quickshell.screens
             if (screens.length > 0) {
                 var firstMonitorWallpaper = SessionData.getMonitorWallpaper(screens[0].name)
@@ -70,8 +74,6 @@ Singleton {
     property bool qtThemingEnabled: typeof SettingsData !== "undefined" ? (SettingsData.qt5ctAvailable || SettingsData.qt6ctAvailable) : false
     property var workerRunning: false
     property var matugenColors: ({})
-    property bool extractionRequested: false
-    property int colorUpdateTrigger: 0
     property var customThemeData: null
 
     readonly property string stateDir: Paths.strip(StandardPaths.writableLocation(StandardPaths.CacheLocation).toString()) + "/dankshell"
@@ -79,16 +81,23 @@ Singleton {
     Component.onCompleted: {
         Quickshell.execDetached(["mkdir", "-p", stateDir])
         matugenCheck.running = true
-        if (typeof SessionData !== "undefined")
+        if (typeof SessionData !== "undefined") {
             SessionData.isLightModeChanged.connect(root.onLightModeChanged)
-        
+        }
+
         if (typeof SettingsData !== "undefined" && SettingsData.currentThemeName) {
-            switchTheme(SettingsData.currentThemeName, false)
+            switchTheme(SettingsData.currentThemeName, false, false)
+        }
+    }
+
+    function applyGreeterTheme(themeName) {
+        switchTheme(themeName, false, false)
+        if (themeName === dynamic && dynamicColorsFileView.path) {
+            dynamicColorsFileView.reload()
         }
     }
 
     function getMatugenColor(path, fallback) {
-        colorUpdateTrigger
         const colorMode = (typeof SessionData !== "undefined" && SessionData.isLightMode) ? "light" : "dark"
         let cur = matugenColors && matugenColors.colors && matugenColors.colors[colorMode]
         for (const part of path.split(".")) {
@@ -118,6 +127,7 @@ Singleton {
                 "outline": getMatugenColor("outline", "#8e918f"),
                 "surfaceContainer": getMatugenColor("surface_container", "#1e2023"),
                 "surfaceContainerHigh": getMatugenColor("surface_container_high", "#292b2f"),
+                "surfaceContainerHighest": getMatugenColor("surface_container_highest", "#343740"),
                 "error": "#F2B8B5",
                 "warning": "#FF9800",
                 "info": "#2196F3",
@@ -128,11 +138,36 @@ Singleton {
         }
     }
 
+    readonly property var availableMatugenSchemes: [
+        ({ "value": "scheme-tonal-spot", "label": "Tonal Spot", "description": "Balanced palette with focused accents (default)." }),
+        ({ "value": "scheme-content", "label": "Content", "description": "Derives colors that closely match the underlying image." }),
+        ({ "value": "scheme-expressive", "label": "Expressive", "description": "Vibrant palette with playful saturation." }),
+        ({ "value": "scheme-fidelity", "label": "Fidelity", "description": "High-fidelity palette that preserves source hues." }),
+        ({ "value": "scheme-fruit-salad", "label": "Fruit Salad", "description": "Colorful mix of bright contrasting accents." }),
+        ({ "value": "scheme-monochrome", "label": "Monochrome", "description": "Minimal palette built around a single hue." }),
+        ({ "value": "scheme-neutral", "label": "Neutral", "description": "Muted palette with subdued, calming tones." }),
+        ({ "value": "scheme-rainbow", "label": "Rainbow", "description": "Diverse palette spanning the full spectrum." })
+    ]
+
+    function getMatugenScheme(value) {
+        const schemes = availableMatugenSchemes
+        for (let i = 0; i < schemes.length; i++) {
+            if (schemes[i].value === value)
+                return schemes[i]
+        }
+        return schemes[0]
+    }
+
     property color primary: currentThemeData.primary
     property color primaryText: currentThemeData.primaryText
     property color primaryContainer: currentThemeData.primaryContainer
     property color secondary: currentThemeData.secondary
-    property color surface: currentThemeData.surface
+    property color surface: {
+        if (typeof SettingsData !== "undefined" && SettingsData.surfaceBase === "s") {
+            return currentThemeData.background
+        }
+        return currentThemeData.surface
+    }
     property color surfaceText: currentThemeData.surfaceText
     property color surfaceVariant: currentThemeData.surfaceVariant
     property color surfaceVariantText: currentThemeData.surfaceVariantText
@@ -141,8 +176,24 @@ Singleton {
     property color backgroundText: currentThemeData.backgroundText
     property color outline: currentThemeData.outline
     property color outlineVariant: currentThemeData.outlineVariant || Qt.rgba(outline.r, outline.g, outline.b, 0.6)
-    property color surfaceContainer: currentThemeData.surfaceContainer
-    property color surfaceContainerHigh: currentThemeData.surfaceContainerHigh
+    property color surfaceContainer: {
+        if (typeof SettingsData !== "undefined" && SettingsData.surfaceBase === "s") {
+            return currentThemeData.surface
+        }
+        return currentThemeData.surfaceContainer
+    }
+    property color surfaceContainerHigh: {
+        if (typeof SettingsData !== "undefined" && SettingsData.surfaceBase === "s") {
+            return currentThemeData.surfaceContainer
+        }
+        return currentThemeData.surfaceContainerHigh
+    }
+    property color surfaceContainerHighest: {
+        if (typeof SettingsData !== "undefined" && SettingsData.surfaceBase === "s") {
+            return currentThemeData.surfaceContainerHigh
+        }
+        return currentThemeData.surfaceContainerHighest
+    }
 
     property color onSurface: surfaceText
     property color onSurfaceVariant: surfaceVariantText
@@ -187,11 +238,22 @@ Singleton {
     property color shadowMedium: Qt.rgba(0, 0, 0, 0.08)
     property color shadowStrong: Qt.rgba(0, 0, 0, 0.3)
 
-    property int shorterDuration: 100
-    property int shortDuration: 150
-    property int mediumDuration: 300
-    property int longDuration: 500
-    property int extraLongDuration: 1000
+    readonly property var animationDurations: [
+        { shorter: 0, short: 0, medium: 0, long: 0, extraLong: 0 },
+        { shorter: 50, short: 75, medium: 150, long: 250, extraLong: 500 },
+        { shorter: 100, short: 150, medium: 300, long: 500, extraLong: 1000 },
+        { shorter: 150, short: 225, medium: 450, long: 750, extraLong: 1500 },
+        { shorter: 200, short: 300, medium: 600, long: 1000, extraLong: 2000 }
+    ]
+
+    readonly property int currentAnimationSpeed: typeof SettingsData !== "undefined" ? SettingsData.animationSpeed : SettingsData.AnimationSpeed.Short
+    readonly property var currentDurations: animationDurations[currentAnimationSpeed] || animationDurations[SettingsData.AnimationSpeed.Short]
+
+    property int shorterDuration: currentDurations.shorter
+    property int shortDuration: currentDurations.short
+    property int mediumDuration: currentDurations.medium
+    property int longDuration: currentDurations.long
+    property int extraLongDuration: currentDurations.extraLong
     property int standardEasing: Easing.OutCubic
     property int emphasizedEasing: Easing.OutQuart
 
@@ -211,8 +273,8 @@ Singleton {
     property real iconSizeLarge: 32
 
     property real panelTransparency: 0.85
-    property real widgetTransparency: typeof SettingsData !== "undefined" && SettingsData.topBarWidgetTransparency !== undefined ? SettingsData.topBarWidgetTransparency : 0.85
-    property real popupTransparency: typeof SettingsData !== "undefined" && SettingsData.popupTransparency !== undefined ? SettingsData.popupTransparency : 0.92
+    property real widgetTransparency: typeof SettingsData !== "undefined" && SettingsData.dankBarWidgetTransparency !== undefined ? SettingsData.dankBarWidgetTransparency : 1.0
+    property real popupTransparency: typeof SettingsData !== "undefined" && SettingsData.popupTransparency !== undefined ? SettingsData.popupTransparency : 1.0
 
     function screenTransition() {
         CompositorService.isNiri && NiriService.doScreenTransition()
@@ -221,11 +283,15 @@ Singleton {
     function switchTheme(themeName, savePrefs = true, enableTransition = true) {
         if (enableTransition) {
             screenTransition()
+            themeTransitionTimer.themeName = themeName
+            themeTransitionTimer.savePrefs = savePrefs
+            themeTransitionTimer.restart()
+            return
         }
+
         if (themeName === dynamic) {
             currentTheme = dynamic
             currentThemeCategory = dynamic
-            extractColors()
         } else if (themeName === custom) {
             currentTheme = custom
             currentThemeCategory = custom
@@ -234,38 +300,46 @@ Singleton {
             }
         } else {
             currentTheme = themeName
-            // Determine category based on theme name
             if (StockThemes.isCatppuccinVariant(themeName)) {
                 currentThemeCategory = "catppuccin"
             } else {
                 currentThemeCategory = "generic"
             }
         }
-        if (savePrefs && typeof SettingsData !== "undefined")
+        const isGreeterMode = (typeof SessionData !== "undefined" && SessionData.isGreeterMode)
+        if (savePrefs && typeof SettingsData !== "undefined" && !isGreeterMode)
             SettingsData.setTheme(currentTheme)
 
-        generateSystemThemesFromCurrentTheme()
+        if (!isGreeterMode) {
+            generateSystemThemesFromCurrentTheme()
+        }
     }
 
-    function setLightMode(light, savePrefs = true) {
-        screenTransition()
+    function setLightMode(light, savePrefs = true, enableTransition = false) {
+        if (enableTransition) {
+            screenTransition()
+            lightModeTransitionTimer.lightMode = light
+            lightModeTransitionTimer.savePrefs = savePrefs
+            lightModeTransitionTimer.restart()
+            return
+        }
+
+        const isGreeterMode = (typeof SessionData !== "undefined" && SessionData.isGreeterMode)
         isLightMode = light
-        if (savePrefs && typeof SessionData !== "undefined")
+        if (savePrefs && typeof SessionData !== "undefined" && !isGreeterMode)
             SessionData.setLightMode(isLightMode)
-        PortalService.setLightMode(isLightMode)
-        generateSystemThemesFromCurrentTheme()
+        if (!isGreeterMode) {
+            PortalService.setLightMode(isLightMode)
+            generateSystemThemesFromCurrentTheme()
+        }
     }
 
     function toggleLightMode(savePrefs = true) {
-        setLightMode(!isLightMode, savePrefs)
+        setLightMode(!isLightMode, savePrefs, true)
     }
 
     function forceGenerateSystemThemes() {
-        screenTransition()
         if (!matugenAvailable) {
-            if (typeof ToastService !== "undefined") {
-                ToastService.showWarning("matugen not available - cannot generate system themes")
-            }
             return
         }
         generateSystemThemesFromCurrentTheme()
@@ -288,8 +362,10 @@ Singleton {
     }
 
     function switchThemeCategory(category, defaultTheme) {
-        currentThemeCategory = category
-        switchTheme(defaultTheme, true, false)
+        screenTransition()
+        themeCategoryTransitionTimer.category = category
+        themeCategoryTransitionTimer.defaultTheme = defaultTheme
+        themeCategoryTransitionTimer.restart()
     }
 
     function getCatppuccinColor(variantName) {
@@ -313,7 +389,6 @@ Singleton {
     }
 
     function loadCustomTheme(themeData) {
-        screenTransition()
         if (themeData.dark || themeData.light) {
             const colorMode = (typeof SessionData !== "undefined" && SessionData.isLightMode) ? "light" : "dark"
             const selectedTheme = themeData[colorMode] || themeData.dark || themeData.light
@@ -348,7 +423,7 @@ Singleton {
     property real notepadTransparency: SettingsData.notepadTransparencyOverride >= 0 ? SettingsData.notepadTransparencyOverride : popupTransparency
 
     property var widgetBaseBackgroundColor: {
-        const colorMode = typeof SettingsData !== "undefined" ? SettingsData.widgetBackgroundColor : "sth"
+        const colorMode = typeof SettingsData !== "undefined" ? SettingsData.widgetBackgroundColor : "sch"
         switch (colorMode) {
             case "s":
                 return surface
@@ -369,7 +444,7 @@ Singleton {
     }
 
     property var widgetBackground: {
-        const colorMode = typeof SettingsData !== "undefined" ? SettingsData.widgetBackgroundColor : "sth"
+        const colorMode = typeof SettingsData !== "undefined" ? SettingsData.widgetBackgroundColor : "sch"
         switch (colorMode) {
             case "s":
                 return Qt.rgba(surface.r, surface.g, surface.b, widgetTransparency)
@@ -393,6 +468,19 @@ Singleton {
 
     function isColorDark(c) {
         return (0.299 * c.r + 0.587 * c.g + 0.114 * c.b) < 0.5
+    }
+
+    function barIconSize(barThickness, offset) {
+        const defaultOffset = offset !== undefined ? offset : -6
+        return Math.round((barThickness / 48) * (iconSize + defaultOffset))
+    }
+
+    function barTextSize(barThickness) {
+        const scale = barThickness / 48
+        const dankBarScale = (typeof SettingsData !== "undefined" ? SettingsData.dankBarFontScale : 1.0)
+        if (scale <= 0.75) return fontSizeSmall * 0.9 * dankBarScale
+        if (scale >= 1.25) return fontSizeMedium * dankBarScale
+        return fontSizeSmall * dankBarScale
     }
 
     function getBatteryIcon(level, isCharging, batteryAvailable) {
@@ -485,23 +573,8 @@ Singleton {
         }
     }
 
-    function extractColors() {
-        extractionRequested = true
-        if (matugenAvailable)
-            if (rawWallpaperPath.startsWith("we:")) {
-                fileCheckerTimer.start()
-            } else {
-                fileChecker.running = true
-            }
-        else
-            matugenCheck.running = true
-    }
 
     function onLightModeChanged() {
-        if (matugenColors && Object.keys(matugenColors).length > 0) {
-            colorUpdateTrigger++
-        }
-
         if (currentTheme === "custom" && customThemeFileView.path) {
             customThemeFileView.reload()
         }
@@ -509,7 +582,7 @@ Singleton {
 
     function setDesiredTheme(kind, value, isLight, iconTheme, matugenType) {
         if (!matugenAvailable) {
-            console.warn("matugen not available - cannot set system theme")
+            console.warn("matugen not available or disabled - cannot set system theme")
             return
         }
 
@@ -522,7 +595,9 @@ Singleton {
             "value": value,
             "mode": isLight ? "light" : "dark",
             "iconTheme": iconTheme || "System Default",
-            "matugenType": matugenType || "scheme-tonal-spot"
+            "matugenType": matugenType || "scheme-tonal-spot",
+            "surfaceBase": (typeof SettingsData !== "undefined" && SettingsData.surfaceBase) ? SettingsData.surfaceBase : "sc",
+            "runUserTemplates": (typeof SettingsData !== "undefined") ? SettingsData.runUserMatugenTemplates : true
         }
 
         const json = JSON.stringify(desired)
@@ -534,16 +609,17 @@ Singleton {
             console.log("calling matugen worker")
             systemThemeGenerator.command = [
                 "sh", "-c",
-                `sleep 1 && ${shellDir}/scripts/matugen-worker.sh '${stateDir}' '${shellDir}' --run`
+                `sleep 1 && ${shellDir}/scripts/matugen-worker.sh '${stateDir}' '${shellDir}' '${configDir}' --run`
             ]
         } else {
-            systemThemeGenerator.command = [shellDir + "/scripts/matugen-worker.sh", stateDir, shellDir, "--run"]
+            systemThemeGenerator.command = [shellDir + "/scripts/matugen-worker.sh", stateDir, shellDir, configDir, "--run"]
         }
         systemThemeGenerator.running = true
     }
 
     function generateSystemThemesFromCurrentTheme() {
-        if (!matugenAvailable)
+        const isGreeterMode = (typeof SessionData !== "undefined" && SessionData.isGreeterMode)
+        if (!matugenAvailable || isGreeterMode)
             return
 
         const isLight = (typeof SessionData !== "undefined" && SessionData.isLightMode)
@@ -553,10 +629,11 @@ Singleton {
             if (!wallpaperPath) {
                 return
             }
+            const selectedMatugenType = (typeof SettingsData !== "undefined" && SettingsData.matugenScheme) ? SettingsData.matugenScheme : "scheme-tonal-spot"
             if (wallpaperPath.startsWith("#")) {
-                setDesiredTheme("hex", wallpaperPath, isLight, iconTheme)
+                setDesiredTheme("hex", wallpaperPath, isLight, iconTheme, selectedMatugenType)
             } else {
-                setDesiredTheme("image", wallpaperPath, isLight, iconTheme)
+                setDesiredTheme("image", wallpaperPath, isLight, iconTheme, selectedMatugenType)
             }
         } else {
             let primaryColor
@@ -584,7 +661,7 @@ Singleton {
     function applyGtkColors() {
         if (!matugenAvailable) {
             if (typeof ToastService !== "undefined") {
-                ToastService.showError("matugen not available - cannot apply GTK colors")
+                ToastService.showError("matugen not available or disabled - cannot apply GTK colors")
             }
             return
         }
@@ -597,7 +674,7 @@ Singleton {
     function applyQtColors() {
         if (!matugenAvailable) {
             if (typeof ToastService !== "undefined") {
-                ToastService.showError("matugen not available - cannot apply Qt colors")
+                ToastService.showError("matugen not available or disabled - cannot apply Qt colors")
             }
             return
         }
@@ -606,80 +683,80 @@ Singleton {
         qtApplier.running = true
     }
 
-    function extractJsonFromText(text) {
-        if (!text)
-            return null
+    function withAlpha(c, a) { return Qt.rgba(c.r, c.g, c.b, a); }
 
-        const start = text.search(/[{\[]/)
-        if (start === -1)
-            return null
-
-        const open = text[start]
-        const pairs = {
-            "{": '}',
-            "[": ']'
-        }
-        const close = pairs[open]
-        if (!close)
-            return null
-
-        let inString = false
-        let escape = false
-        const stack = [open]
-
-        for (var i = start + 1; i < text.length; i++) {
-            const ch = text[i]
-
-            if (inString) {
-                if (escape) {
-                    escape = false
-                } else if (ch === '\\') {
-                    escape = true
-                } else if (ch === '"') {
-                    inString = false
-                }
-                continue
-            }
-
-            if (ch === '"') {
-                inString = true
-                continue
-            }
-            if (ch === '{' || ch === '[') {
-                stack.push(ch)
-                continue
-            }
-            if (ch === '}' || ch === ']') {
-                const last = stack.pop()
-                if (!last || pairs[last] !== ch) {
-                    return null
-                }
-                if (stack.length === 0) {
-                    return text.slice(start, i + 1)
-                }
-            }
-        }
-        return null
+    function snap(value, dpr) {
+        const s = dpr || 1
+        return Math.round(value * s) / s
     }
+
+    function px(value, dpr) {
+        const s = dpr || 1
+        return Math.round(value * s) / s
+    }
+
+    function hairline(dpr) {
+        return 1 / (dpr || 1)
+    }
+
+    function invertHex(hex) {
+        hex = hex.replace('#', '');
+
+        if (!/^[0-9A-Fa-f]{6}$/.test(hex)) {
+            return hex;
+        }
+
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+
+        const invR = (255 - r).toString(16).padStart(2, '0');
+        const invG = (255 - g).toString(16).padStart(2, '0');
+        const invB = (255 - b).toString(16).padStart(2, '0');
+
+        return `#${invR}${invG}${invB}`;
+    }
+
+    property string baseLogoColor: {
+        if (typeof SettingsData === "undefined") return ""
+        const colorOverride = SettingsData.launcherLogoColorOverride
+        if (!colorOverride || colorOverride === "") return ""
+        if (colorOverride === "primary") return primary
+        if (colorOverride === "surface") return surfaceText
+        return colorOverride
+    }
+
+    property string effectiveLogoColor: {
+        if (typeof SettingsData === "undefined") return ""
+
+        const colorOverride = SettingsData.launcherLogoColorOverride
+        if (!colorOverride || colorOverride === "") return ""
+
+        if (colorOverride === "primary") return primary
+        if (colorOverride === "surface") return surfaceText
+
+        if (!SettingsData.launcherLogoColorInvertOnMode) {
+            return colorOverride
+        }
+
+        if (isLightMode) {
+            return invertHex(colorOverride)
+        }
+
+        return colorOverride
+    }
+
+
 
     Process {
         id: matugenCheck
         command: ["which", "matugen"]
         onExited: code => {
-            matugenAvailable = (code === 0)
-            if (!matugenAvailable) {
-                if (typeof ToastService !== "undefined") {
-                    ToastService.wallpaperErrorStatus = "matugen_missing"
-                    ToastService.showWarning("matugen not found - dynamic theming disabled")
-                }
+            matugenAvailable = (code === 0) && !envDisableMatugen
+            const isGreeterMode = (typeof SessionData !== "undefined" && SessionData.isGreeterMode)
+
+            if (!matugenAvailable || isGreeterMode) {
                 return
-            }
-            if (extractionRequested) {
-                if (rawWallpaperPath.startsWith("we:")) {
-                    fileCheckerTimer.start()
-                } else {
-                    fileChecker.running = true
-                }
             }
 
             const isLight = (typeof SessionData !== "undefined" && SessionData.isLightMode)
@@ -688,10 +765,11 @@ Singleton {
             if (currentTheme === dynamic) {
                 if (wallpaperPath) {
                     Quickshell.execDetached(["rm", "-f", stateDir + "/matugen.key"])
+                    const selectedMatugenType = (typeof SettingsData !== "undefined" && SettingsData.matugenScheme) ? SettingsData.matugenScheme : "scheme-tonal-spot"
                     if (wallpaperPath.startsWith("#")) {
-                        setDesiredTheme("hex", wallpaperPath, isLight, iconTheme)
+                        setDesiredTheme("hex", wallpaperPath, isLight, iconTheme, selectedMatugenType)
                     } else {
-                        setDesiredTheme("image", wallpaperPath, isLight, iconTheme)
+                        setDesiredTheme("image", wallpaperPath, isLight, iconTheme, selectedMatugenType)
                     }
                 }
             } else {
@@ -715,122 +793,7 @@ Singleton {
         }
     }
 
-    Process {
-        id: fileChecker
-        command: ["test", "-r", wallpaperPath]
-        onExited: code => {
-            if (code === 0) {
-                matugenProcess.running = true
-            } else if (wallpaperPath.startsWith("#")) {
-                colorMatugenProcess.running = true
-            }
-        }
-    }
 
-    Timer {
-        id: fileCheckerTimer
-        interval: 1000
-        repeat: false
-        onTriggered: {
-            fileChecker.running = true
-        }
-    }
-
-    Process {
-        id: matugenProcess
-        command: ["matugen", "image", wallpaperPath, "--json", "hex"]
-
-        stdout: StdioCollector {
-            id: matugenCollector
-            onStreamFinished: {
-                if (!matugenCollector.text) {
-                    if (typeof ToastService !== "undefined") {
-                        ToastService.wallpaperErrorStatus = "error"
-                        ToastService.showError("Wallpaper Processing Failed: Empty JSON extracted from matugen output.")
-                    }
-                    return
-                }
-                const extractedJson = extractJsonFromText(matugenCollector.text)
-                if (!extractedJson) {
-                    if (typeof ToastService !== "undefined") {
-                        ToastService.wallpaperErrorStatus = "error"
-                        ToastService.showError("Wallpaper Processing Failed: Invalid JSON extracted from matugen output.")
-                    }
-                    console.log("Raw matugen output:", matugenCollector.text)
-                    return
-                }
-                try {
-                    root.matugenColors = JSON.parse(extractedJson)
-                    root.colorUpdateTrigger++
-                    if (typeof ToastService !== "undefined") {
-                        ToastService.clearWallpaperError()
-                    }
-                } catch (e) {
-                    if (typeof ToastService !== "undefined") {
-                        ToastService.wallpaperErrorStatus = "error"
-                        ToastService.showError("Wallpaper processing failed (JSON parse error after extraction)")
-                    }
-                }
-            }
-        }
-
-        onExited: code => {
-            if (code !== 0) {
-                if (typeof ToastService !== "undefined") {
-                    ToastService.wallpaperErrorStatus = "error"
-                    ToastService.showError("Matugen command failed with exit code " + code)
-                }
-            }
-        }
-    }
-
-    Process {
-        id: colorMatugenProcess
-        command: ["matugen", "color", "hex", wallpaperPath, "--json", "hex"]
-
-        stdout: StdioCollector {
-            id: colorMatugenCollector
-            onStreamFinished: {
-                if (!colorMatugenCollector.text) {
-                    if (typeof ToastService !== "undefined") {
-                        ToastService.wallpaperErrorStatus = "error"
-                        ToastService.showError("Color Processing Failed: Empty JSON extracted from matugen output.")
-                    }
-                    return
-                }
-                const extractedJson = extractJsonFromText(colorMatugenCollector.text)
-                if (!extractedJson) {
-                    if (typeof ToastService !== "undefined") {
-                        ToastService.wallpaperErrorStatus = "error"
-                        ToastService.showError("Color Processing Failed: Invalid JSON extracted from matugen output.")
-                    }
-                    console.log("Raw matugen output:", colorMatugenCollector.text)
-                    return
-                }
-                try {
-                    root.matugenColors = JSON.parse(extractedJson)
-                    root.colorUpdateTrigger++
-                    if (typeof ToastService !== "undefined") {
-                        ToastService.clearWallpaperError()
-                    }
-                } catch (e) {
-                    if (typeof ToastService !== "undefined") {
-                        ToastService.wallpaperErrorStatus = "error"
-                        ToastService.showError("Color processing failed (JSON parse error after extraction)")
-                    }
-                }
-            }
-        }
-
-        onExited: code => {
-            if (code !== 0) {
-                if (typeof ToastService !== "undefined") {
-                    ToastService.wallpaperErrorStatus = "error"
-                    ToastService.showError("Matugen color command failed with exit code " + code)
-                }
-            }
-        }
-    }
 
     Process {
         id: ensureStateDir
@@ -843,10 +806,7 @@ Singleton {
         onExited: exitCode => {
             workerRunning = false
 
-            if (exitCode === 2) {
-                // Exit code 2 means wallpaper/color not found - this is expected on first run
-                console.log("Theme worker: wallpaper/color not found, skipping theme generation")
-            } else if (exitCode !== 0) {
+            if (exitCode !== 0 && exitCode !== 2) {
                 if (typeof ToastService !== "undefined") {
                     ToastService.showError("Theme worker failed (" + exitCode + ")")
                 }
@@ -933,26 +893,105 @@ Singleton {
         }
     }
 
+    FileView {
+        id: dynamicColorsFileView
+        path: {
+            const greetCfgDir = Quickshell.env("DMS_GREET_CFG_DIR") || "/etc/greetd/.dms"
+            const colorsPath = SessionData.isGreeterMode
+                ? greetCfgDir + "/colors.json"
+                : stateDir + "/dms-colors.json"
+            return colorsPath
+        }
+        watchChanges: currentTheme === dynamic && !SessionData.isGreeterMode
+
+        function parseAndLoadColors() {
+            try {
+                const colorsText = dynamicColorsFileView.text()
+                if (colorsText) {
+                    root.matugenColors = JSON.parse(colorsText)
+                    if (typeof ToastService !== "undefined") {
+                        ToastService.clearWallpaperError()
+                    }
+                }
+            } catch (e) {
+                console.error("Theme: Failed to parse dynamic colors:", e)
+                if (typeof ToastService !== "undefined") {
+                    ToastService.wallpaperErrorStatus = "error"
+                    ToastService.showError("Dynamic colors parse error: " + e.message)
+                }
+            }
+        }
+
+        onLoaded: {
+            if (currentTheme === dynamic) {
+                parseAndLoadColors()
+            }
+        }
+
+        onFileChanged: {
+            if (currentTheme === dynamic) {
+                dynamicColorsFileView.reload()
+            }
+        }
+
+        onLoadFailed: function (error) {
+            if (currentTheme === dynamic && typeof ToastService !== "undefined") {
+                ToastService.showError("Failed to read dynamic colors: " + error)
+            }
+        }
+    }
+
     IpcHandler {
         target: "theme"
 
         function toggle(): string {
             root.toggleLightMode()
-            return root.isLightMode ? "light" : "dark"
+            return root.isLightMode ? "dark" : "light"
         }
 
         function light(): string {
-            root.setLightMode(true)
+            root.setLightMode(true, true, true)
             return "light"
         }
 
         function dark(): string {
-            root.setLightMode(false)
+            root.setLightMode(false, true, true)
             return "dark"
         }
 
         function getMode(): string {
             return root.isLightMode ? "light" : "dark"
+        }
+    }
+
+    // These timers are for screen transitions, since sometimes QML still beats the niri call
+    Timer {
+        id: themeTransitionTimer
+        interval: 50
+        repeat: false
+        property string themeName: ""
+        property bool savePrefs: true
+        onTriggered: root.switchTheme(themeName, savePrefs, false)
+    }
+
+    Timer {
+        id: lightModeTransitionTimer
+        interval: 100
+        repeat: false
+        property bool lightMode: false
+        property bool savePrefs: true
+        onTriggered: root.setLightMode(lightMode, savePrefs, false)
+    }
+
+    Timer {
+        id: themeCategoryTransitionTimer
+        interval: 50
+        repeat: false
+        property string category: ""
+        property string defaultTheme: ""
+        onTriggered: {
+            root.currentThemeCategory = category
+            root.switchTheme(defaultTheme, true, false)
         }
     }
 }

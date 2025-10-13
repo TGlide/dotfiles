@@ -9,37 +9,37 @@ Rectangle {
     property int currentIndex: 0
     property var parentModal: null
     readonly property var sidebarItems: [{
-        "text": "Personalization",
+        "text": I18n.tr("Personalization"),
         "icon": "person"
     }, {
-        "text": "Time & Date",
+        "text": I18n.tr("Time & Weather"),
         "icon": "schedule"
     }, {
-        "text": "Weather",
-        "icon": "cloud"
-    }, {
-        "text": "Top Bar",
+        "text": I18n.tr("Dank Bar"),
         "icon": "toolbar"
     }, {
-        "text": "Widgets",
+        "text": I18n.tr("Widgets"),
         "icon": "widgets"
     }, {
-        "text": "Dock",
+        "text": I18n.tr("Dock"),
         "icon": "dock_to_bottom"
     }, {
-        "text": "Displays",
+        "text": I18n.tr("Displays"),
         "icon": "monitor"
     }, {
-        "text": "Launcher",
+        "text": I18n.tr("Launcher"),
         "icon": "apps"
     }, {
-        "text": "Theme & Colors",
+        "text": I18n.tr("Theme & Colors"),
         "icon": "palette"
     }, {
-        "text": "Power",
-        "icon": "power_settings_new"
+        "text": I18n.tr("Idle & Lock Screen"),
+        "icon": "lock"
     }, {
-        "text": "About",
+        "text": I18n.tr("Plugins"),
+        "icon": "extension"
+    }, {
+        "text": I18n.tr("About"),
         "icon": "info"
     }]
 
@@ -83,7 +83,7 @@ Rectangle {
                 width: parent.width - Theme.spacingS * 2
                 height: 44
                 radius: Theme.cornerRadius
-                color: isActive ? Theme.primaryContainer : tabMouseArea.containsMouse ? Theme.surfaceHover : "transparent"
+                color: isActive ? Theme.primary : tabMouseArea.containsMouse ? Theme.surfaceHover : "transparent"
 
                 Row {
                     anchors.left: parent.left
@@ -94,14 +94,14 @@ Rectangle {
                     DankIcon {
                         name: modelData.icon || ""
                         size: Theme.iconSize - 2
-                        color: parent.parent.isActive ? Theme.surfaceText : Theme.surfaceText
+                        color: parent.parent.isActive ? Theme.primaryText : Theme.surfaceText
                         anchors.verticalCenter: parent.verticalCenter
                     }
 
                     StyledText {
                         text: modelData.text || ""
                         font.pixelSize: Theme.fontSizeMedium
-                        color: parent.parent.isActive ? Theme.surfaceText : Theme.surfaceText
+                        color: parent.parent.isActive ? Theme.primaryText : Theme.surfaceText
                         font.weight: parent.parent.isActive ? Font.Medium : Font.Normal
                         anchors.verticalCenter: parent.verticalCenter
                     }

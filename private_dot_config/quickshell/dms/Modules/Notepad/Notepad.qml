@@ -211,6 +211,10 @@ Item {
         anchors.fill: parent
         isVisible: showSettingsMenu
         onSettingsRequested: showSettingsMenu = !showSettingsMenu
+        onFindRequested: {
+            showSettingsMenu = false
+            textEditor.showSearch()
+        }
     }
 
     FileView {
@@ -250,7 +254,7 @@ Item {
     FileBrowserModal {
         id: saveBrowser
 
-        browserTitle: qsTr("Save Notepad File")
+        browserTitle: I18n.tr("Save Notepad File")
         browserIcon: "save"
         browserType: "notepad_save"
         fileExtensions: ["*.txt", "*.md", "*.*"]
@@ -314,7 +318,7 @@ Item {
     FileBrowserModal {
         id: loadBrowser
 
-        browserTitle: qsTr("Open Notepad File")
+        browserTitle: I18n.tr("Open Notepad File")
         browserIcon: "folder_open"
         browserType: "notepad_load"
         fileExtensions: ["*.txt", "*.md", "*.*"]
@@ -377,7 +381,7 @@ Item {
                             spacing: Theme.spacingXS
 
                             StyledText {
-                                text: qsTr("Unsaved Changes")
+                                text: I18n.tr("Unsaved Changes")
                                 font.pixelSize: Theme.fontSizeLarge
                                 color: Theme.surfaceText
                                 font.weight: Font.Medium
@@ -385,12 +389,12 @@ Item {
 
                             StyledText {
                                 text: root.pendingAction === "new" ?
-                                      qsTr("You have unsaved changes. Save before creating a new file?") :
+                                      I18n.tr("You have unsaved changes. Save before creating a new file?") :
                                       root.pendingAction.startsWith("close_tab_") ?
-                                      qsTr("You have unsaved changes. Save before closing this tab?") :
+                                      I18n.tr("You have unsaved changes. Save before closing this tab?") :
                                       root.pendingAction === "load_file" || root.pendingAction === "open" ?
-                                      qsTr("You have unsaved changes. Save before opening a file?") :
-                                      qsTr("You have unsaved changes. Save before continuing?")
+                                      I18n.tr("You have unsaved changes. Save before opening a file?") :
+                                      I18n.tr("You have unsaved changes. Save before continuing?")
                                 font.pixelSize: Theme.fontSizeMedium
                                 color: Theme.surfaceTextMedium
                                 width: parent.width
@@ -429,7 +433,7 @@ Item {
                                 StyledText {
                                     id: discardText
                                     anchors.centerIn: parent
-                                    text: qsTr("Don't Save")
+                                    text: I18n.tr("Don't Save")
                                     font.pixelSize: Theme.fontSizeMedium
                                     color: Theme.surfaceText
                                     font.weight: Font.Medium
@@ -469,7 +473,7 @@ Item {
                                 StyledText {
                                     id: saveAsText
                                     anchors.centerIn: parent
-                                    text: qsTr("Save")
+                                    text: I18n.tr("Save")
                                     font.pixelSize: Theme.fontSizeMedium
                                     color: Theme.background
                                     font.weight: Font.Medium

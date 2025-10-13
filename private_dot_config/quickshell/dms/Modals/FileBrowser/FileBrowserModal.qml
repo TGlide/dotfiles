@@ -35,6 +35,7 @@ DankModal {
     property bool weAvailable: false
     property string wePath: ""
     property bool weMode: false
+    property var parentModal: null
 
     signal fileSelected(string path)
 
@@ -131,6 +132,8 @@ DankModal {
 
     objectName: "fileBrowserModal"
     allowStacking: true
+    closeOnEscapeKey: false
+    shouldHaveFocus: shouldBeVisible
     Component.onCompleted: {
         currentPath = getLastPath()
     }
@@ -165,10 +168,23 @@ DankModal {
     visible: false
     onBackgroundClicked: close()
     onOpened: {
-        modalFocusScope.forceActiveFocus()
+        if (parentModal) {
+            parentModal.shouldHaveFocus = false
+            parentModal.allowFocusOverride = true
+        }
+        Qt.callLater(() => {
+            if (contentLoader && contentLoader.item) {
+                contentLoader.item.forceActiveFocus()
+            }
+        })
     }
-    modalFocusScope.Keys.onPressed: function (event) {
-        keyboardController.handleKey(event)
+    onDialogClosed: {
+        if (parentModal) {
+            parentModal.allowFocusOverride = false
+            parentModal.shouldHaveFocus = Qt.binding(() => {
+                return parentModal.shouldBeVisible
+            })
+        }
     }
     onVisibleChanged: {
         if (visible) {
@@ -239,7 +255,12 @@ DankModal {
                 return
             }
             if (!keyboardNavigationActive) {
-                if (event.key === Qt.Key_Tab || event.key === Qt.Key_Down || event.key === Qt.Key_Right) {
+                const isInitKey = event.key === Qt.Key_Tab || event.key === Qt.Key_Down || event.key === Qt.Key_Right ||
+                                  (event.key === Qt.Key_N && event.modifiers & Qt.ControlModifier) ||
+                                  (event.key === Qt.Key_J && event.modifiers & Qt.ControlModifier) ||
+                                  (event.key === Qt.Key_L && event.modifiers & Qt.ControlModifier)
+
+                if (isInitKey) {
                     keyboardNavigationActive = true
                     if (currentPath !== homeDir) {
                         backButtonFocused = true
@@ -280,6 +301,69 @@ DankModal {
                     selectedIndex = totalItems - 1
                 }
                 event.accepted = true
+                break
+            case Qt.Key_N:
+                if (event.modifiers & Qt.ControlModifier) {
+                    if (backButtonFocused) {
+                        backButtonFocused = false
+                        selectedIndex = 0
+                    } else if (selectedIndex < totalItems - 1) {
+                        selectedIndex++
+                    }
+                    event.accepted = true
+                }
+                break
+            case Qt.Key_P:
+                if (event.modifiers & Qt.ControlModifier) {
+                    if (selectedIndex > 0) {
+                        selectedIndex--
+                    } else if (currentPath !== homeDir) {
+                        backButtonFocused = true
+                        selectedIndex = -1
+                    }
+                    event.accepted = true
+                }
+                break
+            case Qt.Key_J:
+                if (event.modifiers & Qt.ControlModifier) {
+                    if (selectedIndex < totalItems - 1) {
+                        selectedIndex++
+                    }
+                    event.accepted = true
+                }
+                break
+            case Qt.Key_K:
+                if (event.modifiers & Qt.ControlModifier) {
+                    if (selectedIndex > 0) {
+                        selectedIndex--
+                    } else if (currentPath !== homeDir) {
+                        backButtonFocused = true
+                        selectedIndex = -1
+                    }
+                    event.accepted = true
+                }
+                break
+            case Qt.Key_H:
+                if (event.modifiers & Qt.ControlModifier) {
+                    if (!backButtonFocused && selectedIndex > 0) {
+                        selectedIndex--
+                    } else if (currentPath !== homeDir) {
+                        backButtonFocused = true
+                        selectedIndex = -1
+                    }
+                    event.accepted = true
+                }
+                break
+            case Qt.Key_L:
+                if (event.modifiers & Qt.ControlModifier) {
+                    if (backButtonFocused) {
+                        backButtonFocused = false
+                        selectedIndex = 0
+                    } else if (selectedIndex < totalItems - 1) {
+                        selectedIndex++
+                    }
+                    event.accepted = true
+                }
                 break
             case Qt.Key_Left:
                 if (backButtonFocused)
@@ -386,6 +470,16 @@ DankModal {
     content: Component {
         Item {
             anchors.fill: parent
+
+            Keys.onPressed: event => {
+                keyboardController.handleKey(event)
+            }
+
+            onVisibleChanged: {
+                if (visible) {
+                    forceActiveFocus()
+                }
+            }
 
             Column {
                 anchors.fill: parent
@@ -527,7 +621,6 @@ DankModal {
                         required property bool fileIsDir
                         required property string filePath
                         required property string fileName
-                        required property url fileURL
                         required property int index
 
                         width: weMode ? 245 : 140
@@ -687,7 +780,7 @@ DankModal {
                     width: parent.width - saveButton.width - Theme.spacingM
                     height: 40
                     text: defaultFileName
-                    placeholderText: "Enter filename..."
+                    placeholderText: I18n.tr("Enter filename...")
                     ignoreLeftRightKeys: false
                     focus: saveMode
                     topPadding: Theme.spacingS
@@ -720,7 +813,7 @@ DankModal {
 
                     StyledText {
                         anchors.centerIn: parent
-                        text: "Save"
+                        text: I18n.tr("Save")
                         color: fileNameInput.text.trim() !== "" ? Theme.primaryText : Theme.surfaceVariantText
                         font.pixelSize: Theme.fontSizeMedium
                     }
@@ -824,7 +917,7 @@ DankModal {
                         spacing: Theme.spacingM
                         
                         StyledText {
-                            text: qsTr("File Already Exists")
+                            text: I18n.tr("File Already Exists")
                             font.pixelSize: Theme.fontSizeLarge
                             font.weight: Font.Medium
                             color: Theme.surfaceText
@@ -832,7 +925,7 @@ DankModal {
                         }
                         
                         StyledText {
-                            text: qsTr("A file with this name already exists. Do you want to overwrite it?")
+                            text: I18n.tr("A file with this name already exists. Do you want to overwrite it?")
                             font.pixelSize: Theme.fontSizeMedium
                             color: Theme.surfaceTextMedium
                             width: parent.width
@@ -854,7 +947,7 @@ DankModal {
                                 
                                 StyledText {
                                     anchors.centerIn: parent
-                                    text: qsTr("Cancel")
+                                    text: I18n.tr("Cancel")
                                     font.pixelSize: Theme.fontSizeMedium
                                     color: Theme.surfaceText
                                     font.weight: Font.Medium
@@ -880,7 +973,7 @@ DankModal {
                                 
                                 StyledText {
                                     anchors.centerIn: parent
-                                    text: qsTr("Overwrite")
+                                    text: I18n.tr("Overwrite")
                                     font.pixelSize: Theme.fontSizeMedium
                                     color: Theme.background
                                     font.weight: Font.Medium

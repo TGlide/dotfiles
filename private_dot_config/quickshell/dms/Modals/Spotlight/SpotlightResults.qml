@@ -10,12 +10,16 @@ Rectangle {
     property var appLauncher: null
     property var contextMenu: null
 
+    function resetScroll() {
+        resultsList.contentY = 0
+        resultsGrid.contentY = 0
+    }
+
     width: parent.width
     height: parent.height - y
     radius: Theme.cornerRadius
-    color: Theme.surfaceLight
-    border.color: Theme.outlineLight
-    border.width: 1
+    color: "transparent"
+    clip: true
 
     DankListView {
         id: resultsList
@@ -75,9 +79,7 @@ Rectangle {
             width: ListView.view.width
             height: resultsList.itemHeight
             radius: Theme.cornerRadius
-            color: ListView.isCurrentItem ? Theme.primaryPressed : listMouseArea.containsMouse ? Theme.primaryHoverLight : Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.03)
-            border.color: ListView.isCurrentItem ? Theme.primarySelected : Theme.outlineMedium
-            border.width: ListView.isCurrentItem ? 2 : 1
+            color: ListView.isCurrentItem ? Theme.primaryPressed : listMouseArea.containsMouse ? Theme.primaryHoverLight : Theme.surfaceContainerHigh
 
             Row {
                 anchors.fill: parent
@@ -161,7 +163,8 @@ Rectangle {
                                if (mouse.button === Qt.LeftButton) {
                                    resultsList.itemClicked(index, model)
                                } else if (mouse.button === Qt.RightButton) {
-                                   const modalPos = mapToItem(resultsContainer.parent, mouse.x, mouse.y)
+                                   const globalPos = mapToItem(null, mouse.x, mouse.y)
+                                   const modalPos = resultsContainer.parent.mapFromItem(null, globalPos.x, globalPos.y)
                                    resultsList.itemRightClicked(index, model, modalPos.x, modalPos.y)
                                }
                            }
@@ -238,9 +241,7 @@ Rectangle {
             width: resultsGrid.cellWidth - resultsGrid.cellPadding
             height: resultsGrid.cellHeight - resultsGrid.cellPadding
             radius: Theme.cornerRadius
-            color: resultsGrid.currentIndex === index ? Theme.primaryPressed : gridMouseArea.containsMouse ? Theme.primaryHoverLight : Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.03)
-            border.color: resultsGrid.currentIndex === index ? Theme.primarySelected : Theme.outlineMedium
-            border.width: resultsGrid.currentIndex === index ? 2 : 1
+            color: resultsGrid.currentIndex === index ? Theme.primaryPressed : gridMouseArea.containsMouse ? Theme.primaryHoverLight : Theme.surfaceContainerHigh
 
             Column {
                 anchors.centerIn: parent
@@ -314,7 +315,8 @@ Rectangle {
                                if (mouse.button === Qt.LeftButton) {
                                    resultsGrid.itemClicked(index, model)
                                } else if (mouse.button === Qt.RightButton) {
-                                   const modalPos = mapToItem(resultsContainer.parent, mouse.x, mouse.y)
+                                   const globalPos = mapToItem(null, mouse.x, mouse.y)
+                                   const modalPos = resultsContainer.parent.mapFromItem(null, globalPos.x, globalPos.y)
                                    resultsGrid.itemRightClicked(index, model, modalPos.x, modalPos.y)
                                }
                            }

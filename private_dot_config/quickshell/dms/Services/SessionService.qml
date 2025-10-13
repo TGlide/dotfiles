@@ -6,6 +6,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
+import Quickshell.Wayland
 import qs.Common
 
 Singleton {
@@ -17,10 +18,58 @@ Singleton {
     property bool inhibitorAvailable: true
     property bool idleInhibited: false
     property string inhibitReason: "Keep system awake"
+    property bool hasPrimeRun: false
 
-    Component.onCompleted: {
-        detectElogindProcess.running = true
-        detectHibernateProcess.running = true
+    readonly property bool nativeInhibitorAvailable: {
+        try {
+            return typeof IdleInhibitor !== "undefined"
+        } catch (e) {
+            return false
+        }
+    }
+
+    property bool loginctlAvailable: false
+    property string sessionId: ""
+    property string sessionPath: ""
+    property bool locked: false
+    property bool active: false
+    property bool idleHint: false
+    property bool lockedHint: false
+    property bool preparingForSleep: false
+    property string sessionType: ""
+    property string userName: ""
+    property string seat: ""
+    property string display: ""
+
+    signal sessionLocked()
+    signal sessionUnlocked()
+    signal prepareForSleep()
+    signal loginctlStateChanged()
+
+    property bool stateInitialized: false
+
+    readonly property string socketPath: Quickshell.env("DMS_SOCKET")
+
+    Timer {
+        id: sessionInitTimer
+        interval: 200
+        running: true
+        repeat: false
+        onTriggered: {
+            detectElogindProcess.running = true
+            detectHibernateProcess.running = true
+            detectPrimeRunProcess.running = true
+            console.log("SessionService: Native inhibitor available:", nativeInhibitorAvailable)
+            if (!SessionData.loginctlLockIntegration) {
+                console.log("SessionService: loginctl lock integration disabled by user")
+                return
+            }
+            if (socketPath && socketPath.length > 0) {
+                checkDMSCapabilities()
+            } else {
+                console.log("SessionService: DMS_SOCKET not set")
+            }
+        }
     }
 
 
@@ -56,6 +105,16 @@ Singleton {
     }
 
     Process {
+        id: detectPrimeRunProcess
+        running: false
+        command: ["which", "prime-run"]
+
+        onExited: function (exitCode) {
+            hasPrimeRun = (exitCode === 0)
+        }
+    }
+
+    Process {
         id: uwsmLogout
         command: ["uwsm", "stop"]
         running: false
@@ -78,8 +137,11 @@ Singleton {
     }
 
     // * Apps
-    function launchDesktopEntry(desktopEntry) {
+    function launchDesktopEntry(desktopEntry, usePrimeRun) {
         let cmd = desktopEntry.command
+        if (usePrimeRun && hasPrimeRun) {
+            cmd = ["prime-run"].concat(cmd)
+        }
         if (SessionData.launchPrefix && SessionData.launchPrefix.length > 0) {
             const launchPrefix = SessionData.launchPrefix.trim().split(" ")
             cmd = launchPrefix.concat(cmd)
@@ -87,7 +149,23 @@ Singleton {
 
         Quickshell.execDetached({
             command: cmd,
-            workingDirectory: desktopEntry.workingDirectory,
+            workingDirectory: desktopEntry.workingDirectory || Quickshell.env("HOME"),
+        });
+    }
+
+    function launchDesktopAction(desktopEntry, action, usePrimeRun) {
+        let cmd = action.command
+        if (usePrimeRun && hasPrimeRun) {
+            cmd = ["prime-run"].concat(cmd)
+        }
+        if (SessionData.launchPrefix && SessionData.launchPrefix.length > 0) {
+            const launchPrefix = SessionData.launchPrefix.trim().split(" ")
+            cmd = launchPrefix.concat(cmd)
+        }
+
+        Quickshell.execDetached({
+            command: cmd,
+            workingDirectory: desktopEntry.workingDirectory || Quickshell.env("HOME"),
         });
     }
 
@@ -132,6 +210,7 @@ Singleton {
         if (idleInhibited) {
             return
         }
+        console.log("SessionService: Enabling idle inhibit (native:", nativeInhibitorAvailable, ")")
         idleInhibited = true
         inhibitorChanged()
     }
@@ -140,6 +219,7 @@ Singleton {
         if (!idleInhibited) {
             return
         }
+        console.log("SessionService: Disabling idle inhibit (native:", nativeInhibitorAvailable, ")")
         idleInhibited = false
         inhibitorChanged()
     }
@@ -155,7 +235,7 @@ Singleton {
     function setInhibitReason(reason) {
         inhibitReason = reason
 
-        if (idleInhibited) {
+        if (idleInhibited && !nativeInhibitorAvailable) {
             const wasActive = idleInhibited
             idleInhibited = false
 
@@ -171,17 +251,22 @@ Singleton {
         id: idleInhibitProcess
 
         command: {
-            if (!idleInhibited) {
+            if (!idleInhibited || nativeInhibitorAvailable) {
                 return ["true"]
             }
 
+            console.log("SessionService: Starting systemd/elogind inhibit process")
             return [isElogind ? "elogind-inhibit" : "systemd-inhibit", "--what=idle", "--who=quickshell", `--why=${inhibitReason}`, "--mode=block", "sleep", "infinity"]
         }
 
-        running: idleInhibited
+        running: idleInhibited && !nativeInhibitorAvailable
+
+        onRunningChanged: {
+            console.log("SessionService: Inhibit process running:", running, "(native:", nativeInhibitorAvailable, ")")
+        }
 
         onExited: function (exitCode) {
-            if (idleInhibited && exitCode !== 0) {
+            if (idleInhibited && exitCode !== 0 && !nativeInhibitorAvailable) {
                 console.warn("SessionService: Inhibitor process crashed with exit code:", exitCode)
                 idleInhibited = false
                 ToastService.showWarning("Idle inhibitor failed")
@@ -189,35 +274,141 @@ Singleton {
         }
     }
 
-    IpcHandler {
-        function toggle(): string {
-            root.toggleIdleInhibit()
-            return root.idleInhibited ? "Idle inhibit enabled" : "Idle inhibit disabled"
-        }
+    Connections {
+        target: DMSService
 
-        function enable(): string {
-            root.enableIdleInhibit()
-            return "Idle inhibit enabled"
-        }
-
-        function disable(): string {
-            root.disableIdleInhibit()
-            return "Idle inhibit disabled"
-        }
-
-        function status(): string {
-            return root.idleInhibited ? "Idle inhibit is enabled" : "Idle inhibit is disabled"
-        }
-
-        function reason(newReason: string): string {
-            if (!newReason) {
-                return `Current reason: ${root.inhibitReason}`
+        function onConnectionStateChanged() {
+            if (DMSService.isConnected) {
+                checkDMSCapabilities()
             }
+        }
+    }
 
-            root.setInhibitReason(newReason)
-            return `Inhibit reason set to: ${newReason}`
+    Connections {
+        target: DMSService
+        enabled: DMSService.isConnected
+
+        function onCapabilitiesChanged() {
+            checkDMSCapabilities()
+        }
+    }
+
+    Connections {
+        target: SessionData
+
+        function onLoginctlLockIntegrationChanged() {
+            if (SessionData.loginctlLockIntegration) {
+                if (socketPath && socketPath.length > 0 && loginctlAvailable) {
+                    if (!stateInitialized) {
+                        stateInitialized = true
+                        getLoginctlState()
+                        syncLockBeforeSuspend()
+                    }
+                }
+            } else {
+                stateInitialized = false
+            }
         }
 
-        target: "inhibit"
+        function onLockBeforeSuspendChanged() {
+            if (SessionData.loginctlLockIntegration) {
+                syncLockBeforeSuspend()
+            }
+        }
     }
+
+    Connections {
+        target: DMSService
+        enabled: SessionData.loginctlLockIntegration
+
+        function onLoginctlStateUpdate(data) {
+            updateLoginctlState(data)
+        }
+
+        function onLoginctlEvent(event) {
+            handleLoginctlEvent(event)
+        }
+    }
+
+    function checkDMSCapabilities() {
+        if (!DMSService.isConnected) {
+            return
+        }
+
+        if (DMSService.capabilities.length === 0) {
+            return
+        }
+
+        if (DMSService.capabilities.includes("loginctl")) {
+            loginctlAvailable = true
+            if (SessionData.loginctlLockIntegration && !stateInitialized) {
+                stateInitialized = true
+                getLoginctlState()
+                syncLockBeforeSuspend()
+            }
+        } else {
+            loginctlAvailable = false
+            console.log("SessionService: loginctl capability not available in DMS")
+        }
+    }
+
+    function getLoginctlState() {
+        if (!loginctlAvailable) return
+
+        DMSService.sendRequest("loginctl.getState", null, response => {
+            if (response.result) {
+                updateLoginctlState(response.result)
+            }
+        })
+    }
+
+    function syncLockBeforeSuspend() {
+        if (!loginctlAvailable) return
+
+        DMSService.sendRequest("loginctl.setLockBeforeSuspend", {
+            enabled: SessionData.lockBeforeSuspend
+        }, response => {
+            if (response.error) {
+                console.warn("SessionService: Failed to sync lock before suspend:", response.error)
+            } else {
+                console.log("SessionService: Synced lock before suspend:", SessionData.lockBeforeSuspend)
+            }
+        })
+    }
+
+    function updateLoginctlState(state) {
+        const wasLocked = locked
+
+        sessionId = state.sessionId || ""
+        sessionPath = state.sessionPath || ""
+        locked = state.locked || false
+        active = state.active || false
+        idleHint = state.idleHint || false
+        lockedHint = state.lockedHint || false
+        sessionType = state.sessionType || ""
+        userName = state.userName || ""
+        seat = state.seat || ""
+        display = state.display || ""
+
+        if (locked && !wasLocked) {
+            sessionLocked()
+        } else if (!locked && wasLocked) {
+            sessionUnlocked()
+        }
+
+        loginctlStateChanged()
+    }
+
+    function handleLoginctlEvent(event) {
+        if (event.event === "Lock") {
+            locked = true
+            lockedHint = true
+            sessionLocked()
+        } else if (event.event === "Unlock") {
+            locked = false
+            lockedHint = false
+            sessionUnlocked()
+        }
+    }
+
 }

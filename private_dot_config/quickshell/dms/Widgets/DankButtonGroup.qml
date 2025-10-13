@@ -2,13 +2,15 @@ import QtQuick
 import qs.Common
 import qs.Widgets
 
-Row {
+Flow {
     id: root
 
     property var model: []
     property int currentIndex: -1
     property string selectionMode: "single"
     property bool multiSelect: selectionMode === "multi"
+    property var initialSelection: []
+    property var currentSelection: initialSelection
     property bool checkEnabled: true
     property int buttonHeight: 40
     property int minButtonWidth: 64
@@ -17,8 +19,15 @@ Row {
     property int textSize: Theme.fontSizeMedium
 
     signal selectionChanged(int index, bool selected)
+    signal animationCompleted()
 
     spacing: Theme.spacingXS
+
+    Timer {
+        id: animationTimer
+        interval: Theme.shortDuration
+        onTriggered: root.animationCompleted()
+    }
 
     function isSelected(index) {
         if (multiSelect) {
@@ -29,11 +38,19 @@ Row {
 
     function selectItem(index) {
         if (multiSelect) {
-            const item = repeater.itemAt(index)
-            if (item) {
-                item.selected = !item.selected
-                selectionChanged(index, item.selected)
+            const modelValue = model[index]
+            let newSelection = [...currentSelection]
+            const isCurrentlySelected = newSelection.includes(modelValue)
+
+            if (isCurrentlySelected) {
+                newSelection = newSelection.filter(item => item !== modelValue)
+            } else {
+                newSelection.push(modelValue)
             }
+
+            currentSelection = newSelection
+            selectionChanged(index, !isCurrentlySelected)
+            animationTimer.restart()
         } else {
             const oldIndex = currentIndex
             currentIndex = index
@@ -41,6 +58,7 @@ Row {
             if (oldIndex !== index && oldIndex >= 0) {
                 selectionChanged(oldIndex, false)
             }
+            animationTimer.restart()
         }
     }
 
@@ -51,7 +69,7 @@ Row {
         delegate: Rectangle {
             id: segment
 
-            property bool selected: multiSelect ? false : (index === root.currentIndex)
+            property bool selected: multiSelect ? root.currentSelection.includes(modelData) : (index === root.currentIndex)
             property bool hovered: mouseArea.containsMouse
             property bool pressed: mouseArea.pressed
             property bool isFirst: index === 0
@@ -62,7 +80,7 @@ Row {
             width: Math.max(contentItem.implicitWidth + root.buttonPadding * 2, root.minButtonWidth) + (selected ? 4 : 0)
             height: root.buttonHeight
 
-            color: selected ? Theme.primaryContainer : Theme.primary
+            color: selected ? Theme.primary : Theme.surfaceVariant
             border.color: "transparent"
             border.width: 0
 
@@ -121,8 +139,8 @@ Row {
                 topRightRadius: parent.topRightRadius
                 bottomRightRadius: parent.bottomRightRadius
                 color: {
-                    if (pressed) return selected ? Theme.primaryPressed : Theme.surfacePressed
-                    if (hovered) return selected ? Theme.primaryHover : Theme.surfaceHover
+                    if (pressed) return selected ? Theme.primaryPressed : Theme.surfaceTextHover
+                    if (hovered) return selected ? Theme.primaryHover : Theme.surfaceTextHover
                     return "transparent"
                 }
 
@@ -148,7 +166,7 @@ Row {
                         id: checkIcon
                         name: "check"
                         size: root.checkIconSize
-                        color: segment.selected ? Theme.surfaceText : Theme.primaryText
+                        color: segment.selected ? Theme.primaryText : Theme.surfaceVariantText
                         visible: root.checkEnabled && segment.selected
                         opacity: segment.selected ? 1 : 0
                         scale: segment.selected ? 1 : 0.6
@@ -174,7 +192,7 @@ Row {
                         text: typeof modelData === "string" ? modelData : modelData.text || ""
                         font.pixelSize: root.textSize
                         font.weight: segment.selected ? Font.Medium : Font.Normal
-                        color: segment.selected ? Theme.surfaceText : Theme.primaryText
+                        color: segment.selected ? Theme.primaryText : Theme.surfaceVariantText
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }

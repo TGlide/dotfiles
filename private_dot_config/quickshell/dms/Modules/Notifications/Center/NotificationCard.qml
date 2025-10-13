@@ -34,12 +34,6 @@ Rectangle {
     }
     radius: Theme.cornerRadius
 
-    Behavior on color {
-        ColorAnimation {
-            duration: Theme.shortDuration
-            easing.type: Theme.standardEasing
-        }
-    }
 
     Behavior on border.color {
         ColorAnimation {
@@ -50,12 +44,12 @@ Rectangle {
 
     color: {
         if (isGroupSelected && keyboardNavigationActive) {
-            return Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.2)
+            return Theme.primaryPressed
         }
         if (keyboardNavigationActive && expanded && selectedNotificationIndex >= 0) {
-            return Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.12)
+            return Theme.primaryHoverLight
         }
-        return Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.1)
+        return Theme.surfaceContainerHigh
     }
     border.color: {
         if (isGroupSelected && keyboardNavigationActive) {
@@ -139,10 +133,8 @@ Rectangle {
             }
 
             hasImage: hasNotificationImage
-            fallbackIcon: notificationGroup?.latestNotification?.appIcon || "notifications"  
+            fallbackIcon: ""
             fallbackText: {
-                if (hasNotificationImage || (notificationGroup?.latestNotification?.appIcon && notificationGroup.latestNotification.appIcon !== ""))
-                    return ""
                 const appName = notificationGroup?.appName || "?"
                 return appName.charAt(0).toUpperCase()
             }
@@ -350,16 +342,10 @@ Rectangle {
                         return baseHeight
                     }
                     radius: Theme.cornerRadius
-                    color: isSelected ? Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.25) : "transparent"
+                    color: isSelected ? Theme.primaryPressed : Theme.surfaceContainerHigh
                     border.color: isSelected ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.4) : Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.05)
                     border.width: isSelected ? 1 : 1
 
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: Theme.shortDuration
-                            easing.type: Theme.standardEasing
-                        }
-                    }
 
                     Behavior on border.color {
                         ColorAnimation {
@@ -402,21 +388,11 @@ Rectangle {
                                 return ""
                             }
 
-                            fallbackIcon: {
-                                if (modelData?.appIcon && !hasNotificationImage) {
-                                    const appIcon = modelData.appIcon
-                                    if (!appIcon.startsWith("file://") && !appIcon.startsWith("http://") && !appIcon.startsWith("https://"))
-                                        return appIcon
-                                }
-                                return "notifications"
-                            }
+                            fallbackIcon: ""
 
                             fallbackText: {
-                                if (!hasNotificationImage && (!modelData?.appIcon || modelData.appIcon === "")) {
-                                    const appName = modelData?.appName || "?"
-                                    return appName.charAt(0).toUpperCase()
-                                }
-                                return ""
+                                const appName = modelData?.appName || "?"
+                                return appName.charAt(0).toUpperCase()
                             }
                         }
 
@@ -561,7 +537,7 @@ Rectangle {
 
                                         StyledText {
                                             id: clearText
-                                            text: "Clear"
+                                            text: I18n.tr("Clear")
                                             color: parent.isHovered ? Theme.primary : Theme.surfaceVariantText
                                             font.pixelSize: Theme.fontSizeSmall
                                             font.weight: Font.Medium
@@ -654,7 +630,7 @@ Rectangle {
 
         StyledText {
             id: clearText
-            text: "Clear"
+            text: I18n.tr("Clear")
             color: clearButton.isHovered ? Theme.primary : Theme.surfaceVariantText
             font.pixelSize: Theme.fontSizeSmall
             font.weight: Font.Medium

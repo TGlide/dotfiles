@@ -12,7 +12,6 @@ DankPopout {
     id: systemUpdatePopout
 
     property var parentWidget: null
-    property string triggerSection: "right"
     property var triggerScreen: null
 
     function setTriggerPosition(x, y, width, section, screen) {
@@ -26,9 +25,9 @@ DankPopout {
     popupWidth: 400
     popupHeight: 500
     triggerX: Screen.width - 600 - Theme.spacingL
-    triggerY: Theme.barHeight - 4 + SettingsData.topBarSpacing + Theme.spacingXS
+    triggerY: Math.max(26 + SettingsData.dankBarInnerPadding + 4, Theme.barHeight - 4 - (8 - SettingsData.dankBarInnerPadding)) + SettingsData.dankBarSpacing + SettingsData.dankBarBottomGap - 2
     triggerWidth: 55
-    positioning: "center"
+    positioning: ""
     screen: triggerScreen
     visible: shouldBeVisible
     shouldBeVisible: false
@@ -70,7 +69,7 @@ DankPopout {
                     color: "transparent"
                     radius: parent.radius + Math.abs(modelData.margin)
                     border.color: modelData.color
-                    border.width: 1
+                    border.width: 0
                     z: modelData.z
                 }
             }
@@ -87,7 +86,7 @@ DankPopout {
                     height: 40
 
                     StyledText {
-                        text: "System Updates"
+                        text: I18n.tr("System Updates")
                         font.pixelSize: Theme.fontSizeLarge
                         color: Theme.surfaceText
                         font.weight: Font.Medium
@@ -157,7 +156,7 @@ DankPopout {
                     radius: Theme.cornerRadius
                     color: Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, 0.1)
                     border.color: Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.05)
-                    border.width: 1
+                    border.width: 0
 
                     Column {
                         anchors.fill: parent
@@ -172,7 +171,7 @@ DankPopout {
                                     return "Failed to check for updates:\n" + SystemUpdateService.errorMessage;
                                 }
                                 if (!SystemUpdateService.helperAvailable) {
-                                    return "No package manager found. Please install 'paru' or 'yay' to check for updates.";
+                                    return "No package manager found. Please install 'paru' or 'yay' on Arch-based systems to check for updates.";
                                 }
                                 if (SystemUpdateService.isChecking) {
                                     return "Checking for updates...";
@@ -208,7 +207,7 @@ DankPopout {
                                 radius: Theme.cornerRadius
                                 color: packageMouseArea.containsMouse ? Theme.primaryHoverLight : "transparent"
                                 border.color: Theme.outlineLight
-                                border.width: 1
+                                border.width: 0
 
                                 Row {
                                     anchors.fill: parent
@@ -283,7 +282,7 @@ DankPopout {
                             }
 
                             StyledText {
-                                text: "Update All"
+                                text: I18n.tr("Update All")
                                 font.pixelSize: Theme.fontSizeMedium
                                 font.weight: Font.Medium
                                 color: Theme.primary
@@ -327,7 +326,7 @@ DankPopout {
                             }
 
                             StyledText {
-                                text: "Close"
+                                text: I18n.tr("Close")
                                 font.pixelSize: Theme.fontSizeMedium
                                 font.weight: Font.Medium
                                 color: Theme.surfaceText
