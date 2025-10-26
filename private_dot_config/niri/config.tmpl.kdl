@@ -13,7 +13,7 @@ input {
             // For more information, see xkeyboard-config(7).
 						layout "us,us_intl"
 						variant ",qwerty"
-						options "grp:alt_space_toggle"
+						options "grp:alt_space_toggle,compose:ralt"
         }
 
         // Enable numlock on startup, omitting this setting disables it.
@@ -368,7 +368,7 @@ binds {
 		Super+E hotkey-overlay-title="Open Nautilus" { spawn "nautilus"; }
 
 		// SCRIPTS
-		Super+B { spawn "sh" "-c" "dms ipc call wallpaper set $(~/scripts/random-wallpaper.sh)"; }
+		Super+B { spawn "sh" "-c" "matugen image $(~/scripts/random-wallpaper.sh)"; }
 		Super+Shift+W hotkey-overlay-title="Restart Waybar" { spawn "sh" "-c" "killall waybar ; sleep 0.1 ; waybar & disown
 " ; }
 		// Super+A hotkey-overlay-title="Capture Screen" { spawn "sh" "-c" "grim -g \"$(slurp; sleep .1)\" - | swappy -f -"; }

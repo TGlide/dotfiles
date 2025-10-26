@@ -1,6 +1,6 @@
 [config.wallpaper]
-command = "swaybg"
-arguments = ["-m", "fill", "-i"]
+command = "dms"
+arguments = ["ipc", "call", "wallpaper", "set"]
 set = true
 
 
