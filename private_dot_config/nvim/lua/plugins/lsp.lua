@@ -198,25 +198,13 @@ return {
 
 		-- Extra keymaps
 		vim.keymap.set("n", "<leader>oi", function()
-			local file_name = vim.api.nvim_buf_get_name(0)
-			local file_ext = vim.fn.fnamemodify(file_name, ":e")
-
-			if file_ext == "ts" or file_ext == "tsx" then
-				local params = {
-					command = "_typescript.organizeImports",
-					arguments = { file_name },
-					title = "",
-				}
-				vim.lsp.buf.execute_command(params)
-			else
-				vim.lsp.buf.code_action({
-					context = {
-						only = { "source.organizeImports" },
-						diagnostics = vim.diagnostic.get(0),
-					},
-					apply = true,
-				})
-			end
+			vim.lsp.buf.code_action({
+				context = {
+					only = { "source.organizeImports" },
+					diagnostics = {},
+				},
+				apply = true,
+			})
 		end, { desc = "Organize Imports" })
 
 		-- Styling

@@ -13,4 +13,8 @@ return {
 			},
 		},
 	},
+	commands = {
+		-- Suppress "does not support command" notification for organize imports
+		["_typescript.didOrganizeImports"] = function() end,
+	},
 }
