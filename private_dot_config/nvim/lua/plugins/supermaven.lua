@@ -1,6 +1,6 @@
 return {
 	"supermaven-inc/supermaven-nvim",
-	-- enabled = false,
+	enabled = false,
 	config = function()
 		require("supermaven-nvim").setup({})
 	end,

@@ -11,3 +11,4 @@ font-size = 14
 # custom-shader = ./alt-shaders/bloom1.glsl
 # custom-shader = ./alt-shaders/scanlines.glsl
 keybind = shift+enter=text:\x1b\r
+keybind = ctrl+alt+comma=open_config
