@@ -88,3 +88,10 @@ vim.o.scrolloff = 10
 vim.o.confirm = true
 
 -- vim.o.winborder = "rounded"
+
+-- Highlight text on yank
+vim.api.nvim_create_autocmd("TextYankPost", {
+	callback = function()
+		vim.highlight.on_yank({ timeout = 100 })
+	end,
+})
