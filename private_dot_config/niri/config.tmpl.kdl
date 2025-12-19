@@ -329,6 +329,11 @@ window-rule {
     block-out-from "screen-capture"
 }
 
+window-rule {
+    match app-id="steam" title=r#"^notificationtoasts_\d+_desktop$"#
+    default-floating-position x=10 y=10 relative-to="bottom-right"
+}
+
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
 /-window-rule {
@@ -657,6 +662,9 @@ binds {
 environment {
     ELECTRON_OZONE_PLATFORM_HINT "auto"
 		DISPLAY ":0"
+		GTK_IM_MODULE "ibus"
+		QT_IM_MODULE "ibus"
+		XMODIFIERS "@im=ibus"
 }
 
 cursor {

@@ -47,7 +47,7 @@ status is-interactive; and begin
     alias grv 'git remote -v'
     alias gs 'git status'
     alias nv nvim
-    alias yay paru
+    # alias yay paru
 		alias wo 'pomodoro work'
 		alias br 'pomodoro break'
 
@@ -145,3 +145,6 @@ end
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
 set --export PATH $BUN_INSTALL/bin $PATH
+
+# opencode
+fish_add_path /home/thomasgl/.opencode/bin
