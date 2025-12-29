@@ -177,6 +177,7 @@ return {
 					"stylua",
 					"lua-language-server",
 					"eslint-lsp",
+					"tailwindcss-language-server",
 				},
 			})
 
@@ -187,6 +188,7 @@ return {
 				"gdscript",
 				"vtsls",
 				"svelte",
+				"tailwindcss",
 			})
 		end,
 	},

@@ -20,3 +20,17 @@ Host tangled.sh
 	User git
 	IdentityFile ~/.ssh/tangled
 	AddKeysToAgent yes
+
+Host gitea.thomas.rocks
+	HostName gitea.thomas.rocks
+	User git
+	Port 22222
+	IdentityFile ~/.ssh/gitea
+	AddKeysToAgent yes
+
+Host gitea.unrail.xyz
+	HostName gitea.unrail.xyz
+	User git
+	Port 2222
+	IdentityFile ~/.ssh/gitea-unrail
+	AddKeysToAgent yes
