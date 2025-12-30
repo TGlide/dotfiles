@@ -3,16 +3,6 @@ command = "dms"
 arguments = ["ipc", "call", "wallpaper", "set"]
 set = true
 
-
-# [templates.waybar]
-# input_path = './templates/waybar-colors.css'
-# output_path = '~/.config/waybar/colors.css'
-# post_hook = 'pkill -SIGUSR2 waybar'
- 
-[templates.hyprland]
-input_path = './templates/hyprland-colors.conf'
-output_path = '~/.config/hypr/config/colors.conf'
-
 [templates.ghostty]
 input_path = './templates/ghostty-theme'
 output_path = '~/.config/ghostty/themes/matugen'
@@ -29,10 +19,6 @@ output_path = '~/.config/gtk-4.0/colors.css'
 [templates.starship]
 input_path = './templates/starship-colors.toml'
 output_path = '~/.config/starship.toml'
-
-# [templates.neovim]
-# input_path = './templates/neovim-colors.lua'
-# output_path = '~/.config/nvim/lua/matugen/colors.lua'
 
 [templates.yazi]
 input_path = './templates/yazi-theme.toml'
