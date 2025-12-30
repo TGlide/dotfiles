@@ -7,7 +7,7 @@ selection-foreground = {{colors.on_secondary.default.hex}}
 selection-background ={{colors.secondary_fixed_dim.default.hex}}
 
 # black
-palette=8={{colors.on_surface_variant.default.hex | set_lightness: -20.0}}
+palette=8={{colors.on_surface_variant.default.hex | set_lightness: 60.0}}
 palette=0=#4c4c4c
 
 # red
