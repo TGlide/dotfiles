@@ -1,0 +1,6 @@
+[user]
+name = "Thomas G. Lopes"
+email = "thomasgl@pm.me"
+
+[git]
+write-change-id-header = true
