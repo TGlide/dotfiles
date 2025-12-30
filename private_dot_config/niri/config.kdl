@@ -3,6 +3,8 @@
 // Check the wiki for a full description of the configuration:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Introduction
 
+include "colors.kdl"
+
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Input
@@ -161,12 +163,6 @@ layout {
         // - RGB hex: "#rgb", "#rgba", "#rrggbb", "#rrggbbaa"
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
-        // Color of the ring on the active monitor.
-        active-color "@primary"
-
-        // Color of the ring on inactive monitors.
-        inactive-color "@outline"
-
         // You can also use gradients. They take precedence over solid colors.
         // Gradients are rendered the same as CSS linear-gradient(angle, from, to).
         // The angle is the same as in linear-gradient, and is optional,
@@ -190,14 +186,6 @@ layout {
         off
 
         width 4
-        active-color "@secondary"
-        inactive-color "@outline"
-
-        // Color of the border around windows that request your attention.
-        urgent-color "@error"
-
-        // active-gradient from="#ffbb66" to="#ffc880" angle=45 relative-to="workspace-view"
-        // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
     }
 
     // You can enable drop shadows for windows.
@@ -232,9 +220,6 @@ layout {
 
         // Offset moves the shadow relative to the window.
         offset x=0 y=5
-
-        // You can also change the shadow color and opacity.
-        color "@shadow"
     }
 
     // Struts shrink the area occupied by windows, similarly to layer-shell panels.

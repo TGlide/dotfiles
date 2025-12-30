@@ -1,0 +1,26 @@
+layout {
+	focus-ring {
+		// Color of the ring on the active monitor.
+		active-color "{{ colors.primary.default.hex }}"
+
+		// Color of the ring on inactive monitors.
+		inactive-color "{{ colors.outline.default.hex }}"
+	}
+
+	border {
+		active-color "{{ colors.secondary.default.hex }}"
+		inactive-color "{{ colors.outline.default.hex }}"
+
+		// Color of the border around windows that request your attention.
+		urgent-color "{{ colors.error.default.hex }}"
+
+		// active-gradient from="#ffbb66" to="#ffc880" angle=45 relative-to="workspace-view"
+		// inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
+	}
+
+	shadow {
+		// You can also change the shadow color and opacity.
+		color "{{ colors.shadow.default.hex }}"
+	}
+
+}
