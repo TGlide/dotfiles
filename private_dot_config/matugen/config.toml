@@ -46,5 +46,5 @@ input_path = './templates/rofi-colors.rasi'
 output_path = '~/.config/rofi/colors/matugen.rasi'
 
 [templates.niri]
-input_path = './templates/niri-colors.conf'
-output_path = '~/.config/niri/colors.conf'
+input_path = './templates/niri-colors.kdl'
+output_path = '~/.config/niri/colors.kdl'
