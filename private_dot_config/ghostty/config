@@ -1,6 +1,7 @@
-theme = rose-pine-moon
 theme = matugen
 
+background-opacity = 0.95
+background-blur = true
 font-family = "FantasqueSansM Nerd Font"
 font-size = 14
 
