@@ -1,9 +1,61 @@
+local fallback_palette = {
+	color0 = "#191724",
+	color1 = "#eb6f92",
+	color2 = "#31748f",
+	color3 = "#f6c177",
+	color4 = "#9ccfd8",
+	color5 = "#c4a7e7",
+	color6 = "#ebbcba",
+	color7 = "#908caa",
+	color8 = "#26233a",
+	color9 = "#eb6f92",
+	color10 = "#31748f",
+	color11 = "#f6c177",
+	color12 = "#9ccfd8",
+	color13 = "#c4a7e7",
+	color14 = "#ebbcba",
+	color15 = "#e0def4",
+}
+
+local function build_theme()
+	local c = _G.matugen_palette or fallback_palette
+	local bg_base = "NONE"
+	local dark = "#000000"
+	local color = require("util.color")
+
+	return {
+		normal = {
+			a = { bg = c.color4, fg = dark, gui = "bold" },
+			b = { bg = color.darken(c.color4, 50), fg = c.color15 },
+			c = { bg = c.color0, fg = c.color15 },
+		},
+		insert = {
+			a = { bg = c.color2, fg = dark, gui = "bold" },
+			b = { bg = color.darken(c.color2, 50), fg = c.color15 },
+		},
+		visual = {
+			a = { bg = c.color5, fg = dark, gui = "bold" },
+			b = { bg = color.darken(c.color5, 50), fg = c.color15 },
+		},
+		replace = {
+			a = { bg = c.color3, fg = dark, gui = "bold" },
+			b = { bg = color.darken(c.color3, 50), fg = c.color15 },
+		},
+		command = {
+			a = { bg = c.color1, fg = dark, gui = "bold" },
+			b = { bg = color.darken(c.color1, 50), fg = c.color15 },
+		},
+		inactive = {
+			a = { bg = bg_base, fg = c.color7, gui = "bold" },
+			b = { bg = bg_base, fg = c.color7 },
+		},
+	}
+end
+
 local function setup_macro_refresh(lualine)
 	vim.api.nvim_create_autocmd("RecordingEnter", {
 		callback = function()
-			lualine.refresh({
-				place = { "statusline" },
-			})
+			lualine.refresh({ place = { "statusline" } })
 		end,
 	})
 	vim.api.nvim_create_autocmd("RecordingLeave", {
@@ -13,9 +65,7 @@ local function setup_macro_refresh(lualine)
 				50,
 				0,
 				vim.schedule_wrap(function()
-					lualine.refresh({
-						place = { "statusline" },
-					})
+					lualine.refresh({ place = { "statusline" } })
 				end)
 			)
 		end,
@@ -23,19 +73,23 @@ local function setup_macro_refresh(lualine)
 end
 
 local function macro_recording_status()
-	local function current_status()
-		local register = vim.fn.reg_recording()
-		return register == "" and "" or "RECORDING @" .. register
-	end
-	return { "macro-recording", fmt = current_status }
+	return {
+		"macro-recording",
+		fmt = function()
+			local register = vim.fn.reg_recording()
+			return register == "" and "" or "RECORDING @" .. register
+		end,
+	}
+end
+
+local function heart()
+	return [[♥ ]]
 end
 
 return {
 	"nvim-lualine/lualine.nvim",
 	event = "VeryLazy",
-	dependencies = {
-		"nvim-tree/nvim-web-devicons",
-	},
+	dependencies = { "nvim-tree/nvim-web-devicons" },
 	init = function()
 		vim.opt.laststatus = 0
 	end,
@@ -45,107 +99,38 @@ return {
 		local lualine = require("lualine")
 		setup_macro_refresh(lualine)
 
-		local function heart()
-			return [[♥ ]]
-			--return [[󰋑]]
-		end
-
-		-- custom theme
-		-- local custom_rose_pine = require 'lualine.themes.rose-pine'
-		local p = require("rose-pine.palette")
-		local config = require("rose-pine.config")
-
-		local bg_base = p.base
-		if config.options.styles.transparency then
-			bg_base = "NONE"
-		end
-
-		local custom_rose_pine = {
-			normal = {
-				a = { bg = p.rose, fg = p.base, gui = "bold" },
-				b = { bg = p.overlay, fg = p.rose },
-				c = { bg = p.surface, fg = p.text },
-			},
-			insert = {
-				a = { bg = p.foam, fg = p.base, gui = "bold" },
-				b = { bg = p.overlay, fg = p.foam },
-				--c = { bg = "#252834", fg = p.text },
-			},
-			visual = {
-				a = { bg = p.iris, fg = p.base, gui = "bold" },
-				b = { bg = p.overlay, fg = p.iris },
-				--c = { bg = "#292436", fg = p.text },
-			},
-			replace = {
-				a = { bg = p.pine, fg = p.base, gui = "bold" },
-				b = { bg = p.overlay, fg = p.pine },
-				-- c = { bg = "#1C2231", fg = p.text },
-			},
-			command = {
-				a = { bg = p.love, fg = p.base, gui = "bold" },
-				b = { bg = p.overlay, fg = p.love },
-				-- c = { bg = "#2C1F2E", fg = p.text },
-			},
-			inactive = {
-				a = { bg = bg_base, fg = p.muted, gui = "bold" },
-				b = { bg = bg_base, fg = p.muted },
-				-- c = { bg = bg_base, fg = p.muted },
-			},
-		}
-
-		--- @param trunc_width number trunctates component when screen width is less then trunc_width
-		--- @param trunc_len number truncates component to trunc_len number of chars
-		--- @param hide_width number hides component when window width is smaller then hide_width
-		--- @param no_ellipsis boolean whether to disable adding '...' at end after truncation
-		--- return function that can format the component accordingly
-		local function trunc(trunc_width, trunc_len, hide_width, no_ellipsis)
-			return function(str)
-				local win_width = vim.fn.winwidth(0)
-				if hide_width and win_width < hide_width then
-					return ""
-				elseif trunc_width and trunc_len and win_width < trunc_width and #str > trunc_len then
-					return str:sub(1, trunc_len) .. (no_ellipsis and "" or "...")
-				end
-				return str
-			end
-		end
-
-		lualine.setup({
-			options = {
-				theme = custom_rose_pine,
-				component_separators = "",
-				section_separators = { left = "", right = "" },
-				disabled_filetypes = { "alpha" },
-			},
-			sections = {
-				lualine_a = {
-					{ "mode", separator = { left = "", right = "" }, right_padding = 2 },
-					macro_recording_status(),
+		local function do_setup()
+			lualine.setup({
+				options = {
+					theme = build_theme(),
+					component_separators = "",
+					section_separators = { left = "", right = "" },
+					disabled_filetypes = { "alpha" },
 				},
-				lualine_b = {
-					{ "branch", fmt = trunc(1200, 20, nil, false) },
-					"diff",
-					"diagnostics",
-				},
-				lualine_c = {
-					-- { require("NeoComposer.ui").status_recording },
-					{ "filename", path = 1 },
-				},
-				lualine_x = { "filetype" },
-				lualine_y = { "progress" },
-				lualine_z = {
-					{
-						"location",
-						separator = { left = "" },
-						left_padding = 2,
+				sections = {
+					lualine_a = {
+						{ "mode", separator = { left = "", right = "" }, right_padding = 2 },
+						macro_recording_status(),
 					},
-					{
-						heart,
-						separator = { right = "" },
+					lualine_b = { "diff", "diagnostics" },
+					lualine_c = { { "filename", path = 1 } },
+					lualine_x = { "filetype" },
+					lualine_y = { "progress" },
+					lualine_z = {
+						{ "location", separator = { left = "" }, left_padding = 2 },
+						{ heart, separator = { right = "" } },
 					},
 				},
-			},
-			extensions = { "nvim-tree", "fzf" },
+				extensions = { "nvim-tree", "fzf" },
+			})
+		end
+
+		do_setup()
+
+		-- Re-setup lualine when matugen reloads theme
+		vim.api.nvim_create_autocmd("User", {
+			pattern = "MatugenReload",
+			callback = do_setup,
 		})
 	end,
 }

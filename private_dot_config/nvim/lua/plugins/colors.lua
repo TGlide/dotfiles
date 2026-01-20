@@ -2,6 +2,7 @@ return {
 	{
 		"rose-pine/neovim",
 		name = "rose-pine",
+		enabled = false,
 		config = function()
 			vim.opt.laststatus = 2 -- Or 3 for global statusline
 			vim.opt.statusline = " %f %m %= %l:%c ♥ "

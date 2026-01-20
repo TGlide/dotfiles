@@ -1,41 +1,42 @@
-[config.wallpaper]
-command = "dms"
-arguments = ["ipc", "call", "wallpaper", "set"]
-set = true
+[config]
 
 [templates.ghostty]
-input_path = './templates/ghostty-theme'
+input_path = '~/.config/matugen/templates/ghostty-theme'
 output_path = '~/.config/ghostty/themes/matugen'
 post_hook = 'pkill -SIGUSR2 ghostty'
 
 [templates.gtk3]
-input_path = './templates/gtk-colors.css'
+input_path = '~/.config/matugen/templates/gtk-colors.css'
 output_path = '~/.config/gtk-3.0/colors.css'
 
 [templates.gtk4]
-input_path = './templates/gtk-colors.css'
+input_path = '~/.config/matugen/templates/gtk-colors.css'
 output_path = '~/.config/gtk-4.0/colors.css'
 
 [templates.starship]
-input_path = './templates/starship-colors.toml'
+input_path = '~/.config/matugen/templates/starship-colors.toml'
 output_path = '~/.config/starship.toml'
 
 [templates.yazi]
-input_path = './templates/yazi-theme.toml'
+input_path = '~/.config/matugen/templates/yazi-theme.toml'
 output_path = '~/.config/yazi/theme.toml'
 
 [templates.qt5ct]
-input_path = './templates/qtct-colors.conf'
+input_path = '~/.config/matugen/templates/qtct-colors.conf'
 output_path = '~/.config/qt5ct/colors/matugen.conf'
 
 [templates.rofi]
-input_path = './templates/rofi-colors.rasi'
+input_path = '~/.config/matugen/templates/rofi-colors.rasi'
 output_path = '~/.config/rofi/colors/matugen.rasi'
 
 [templates.niri]
-input_path = './templates/niri-colors.kdl'
+input_path = '~/.config/matugen/templates/niri-colors.kdl'
 output_path = '~/.config/niri/colors.kdl'
 
 [templates.jjui]
-input_path = './templates/jjui-theme.toml'
+input_path = '~/.config/matugen/templates/jjui-theme.toml'
 output_path = '~/.config/jjui/themes/matugen.toml'
+
+[templates.nvim]
+input_path = '~/.config/matugen/templates/neovim.lua'
+output_path = '~/.config/nvim/lua/plugins/dankcolors.lua'

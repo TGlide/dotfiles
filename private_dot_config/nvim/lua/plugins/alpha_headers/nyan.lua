@@ -85,22 +85,33 @@ M.setup = function(dashboard)
 		[[ WWWWVVVVVVVVVVVVVVVVWWWWWWWWWWWWWWWWVVVVVVVVVVBBBBBBBBWWWWBBBBBBWWWWWWWWWWWWWWBBBBBBWWWWBBBBWWWWWWWWWW ]],
 	}
 
-	local palette = require("rose-pine.palette")
+	local c = {
+		color0 = "#191724",
+		color1 = "#eb6f92",
+		color2 = "#31748f",
+		color3 = "#f6c177",
+		color4 = "#9ccfd8",
+		color5 = "#c4a7e7",
+		color6 = "#ebbcba",
+		color7 = "#908caa",
+		color8 = "#26233a",
+		color15 = "#e0def4",
+	}
 
 	local colors = {
-		["W"] = { fg = palette.base },
-		["C"] = { fg = palette.text },
-		["B"] = { fg = palette.surface },
-		["R"] = { fg = palette.love },
-		["O"] = { fg = palette.rose },
-		["Y"] = { fg = palette.gold },
-		["G"] = { fg = palette.foam },
-		["U"] = { fg = palette.pine },
-		["P"] = { fg = "#d7c08d" }, -- Using Yellow color (as specified in original)
-		["H"] = { fg = palette.iris },
-		["F"] = { fg = palette.love },
-		["M"] = { fg = palette.subtle },
-		["V"] = { fg = palette.iris },
+		["W"] = { fg = c.color0 },
+		["C"] = { fg = c.color15 },
+		["B"] = { fg = c.color8 },
+		["R"] = { fg = c.color1 },
+		["O"] = { fg = c.color6 },
+		["Y"] = { fg = c.color3 },
+		["G"] = { fg = c.color4 },
+		["U"] = { fg = c.color2 },
+		["P"] = { fg = c.color3 },
+		["H"] = { fg = c.color5 },
+		["F"] = { fg = c.color1 },
+		["M"] = { fg = c.color7 },
+		["V"] = { fg = c.color5 },
 	}
 
 	dashboard.section.header.val = header
