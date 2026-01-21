@@ -1,7 +1,7 @@
 local M = {}
 
 M.setup = function(dashboard)
-	-- vim.api.nvim_set_hl(0, "AlphaHeaderRed", { fg = "#ff5555", bold = true })
+	vim.api.nvim_set_hl(0, "AlphaHeaderRed", { fg = _G.matugen_palette.color12, bold = true })
 
 	local logo = {
 		"⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠿⠋⠀⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠈⠉⠉⠙⠛⠛⠻⢿⣿⡿⠟⠁⠀⣀⣴⣿⣿⣿⣿⣿⠟",
