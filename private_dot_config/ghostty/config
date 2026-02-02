@@ -1,4 +1,4 @@
-theme = matugen
+theme = Rose Pine
 
 background-opacity = 0.95
 background-blur = true
@@ -13,3 +13,6 @@ font-size = 14
 # custom-shader = ./alt-shaders/scanlines.glsl
 keybind = shift+enter=text:\x1b\r
 keybind = ctrl+alt+comma=open_config
+
+command = /opt/homebrew/bin/fish --login --interactive
+

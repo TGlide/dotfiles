@@ -7,3 +7,9 @@
     defaultBranch = main
 [credential]
     helper = /usr/bin/git-credential-libsecret ; Or the correct path to your helper
+[commit]
+	gpgsign = true
+[user]
+  email = thomas.lopes@attio.com
+  name = Thomas G. Lopes
+	signingkey = 82615C47AA7EB112B42817C7CB792BD2AD5A6002

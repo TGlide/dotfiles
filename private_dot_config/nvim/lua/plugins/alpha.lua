@@ -29,7 +29,7 @@ return {
 			-- Randomly select a header
 			math.randomseed(os.time()) -- Initialize random seed
 			local random_header = headers[math.random(#headers)]
-			local random_header = "outer_wilds"
+			local random_header = "bee"
 
 			-- Construct the full path and require the header
 			local header = "plugins.alpha_headers." .. random_header
