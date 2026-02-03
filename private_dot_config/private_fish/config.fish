@@ -148,3 +148,11 @@ set --export PATH $BUN_INSTALL/bin $PATH
 
 # opencode
 fish_add_path /home/thomasgl/.opencode/bin
+
+source ~/.safe-chain/scripts/init-fish.fish # Safe-chain Fish initialization script
+
+# opencode
+fish_add_path /Users/thomasglopes/.opencode/bin
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/thomasglopes/google-cloud-sdk/path.fish.inc' ]; . '/Users/thomasglopes/google-cloud-sdk/path.fish.inc'; end
