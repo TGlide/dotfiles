@@ -86,8 +86,12 @@ return {
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 
 					-- Highlight references of the word under cursor
-					if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-						local highlight_augroup = vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
+					if
+						client
+						and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
+					then
+						local highlight_augroup =
+							vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = event.buf,
 							group = highlight_augroup,
@@ -110,7 +114,9 @@ return {
 					end
 
 					-- Toggle inlay hints keymap
-					if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+					if
+						client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
+					then
 						map("<leader>th", function()
 							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 						end, "[T]oggle Inlay [H]ints")
@@ -179,8 +185,21 @@ return {
 					"css-lsp",
 					"eslint-lsp",
 					"tailwindcss-language-server",
+					"biome",
 				},
 			})
+
+			-- Load custom LSP configs from nvim/lsp/*.lua to override nvim-lspconfig defaults
+			local lsp_path = vim.fn.stdpath("config") .. "/lsp"
+			for _, file in ipairs(vim.fn.readdir(lsp_path)) do
+				if file:match("%.lua$") then
+					local name = file:gsub("%.lua$", "")
+					local config = dofile(lsp_path .. "/" .. file)
+					if type(config) == "table" then
+						vim.lsp.config(name, config)
+					end
+				end
+			end
 
 			-- Enable LSP servers (configs are in nvim/lsp/*.lua)
 			vim.lsp.enable({
@@ -191,6 +210,7 @@ return {
 				"vtsls",
 				"svelte",
 				"tailwindcss",
+				"biome",
 			})
 		end,
 	},
