@@ -3,8 +3,10 @@ local map = function(keys, func, desc, mode)
 	vim.keymap.set(mode, keys, func, { desc = desc })
 end
 
--- Project view
-map("<leader>pv", ":Oil<CR>", "Open Oil file explorer")
+-- Project view (mini.files)
+map("<leader>pv", function()
+	MiniFiles.open(vim.api.nvim_buf_get_name(0))
+end, "Open file explorer")
 
 -- Move lines around
 map("J", ":m '>+1<CR>gv=gv", "Move line down", "v")
