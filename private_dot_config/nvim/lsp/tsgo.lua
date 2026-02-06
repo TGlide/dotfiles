@@ -1,5 +1,5 @@
 return {
-	cmd = { "vtsls", "--stdio" },
+	cmd = { "tsgo", "--lsp", "--stdio" },
 	filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
 	-- Use .git to find monorepo root so vtsls indexes ALL packages
 	root_markers = { ".git" },
@@ -25,6 +25,7 @@ return {
 		typescript = {
 			tsserver = {
 				maxTsServerMemory = 8192,
+				maxMemory = 8192, -- Give it 8GB of RAM for large projects
 			},
 		},
 	},
