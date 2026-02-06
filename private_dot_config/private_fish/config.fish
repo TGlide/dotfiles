@@ -156,3 +156,4 @@ fish_add_path /Users/thomasglopes/.opencode/bin
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/thomasglopes/google-cloud-sdk/path.fish.inc' ]; . '/Users/thomasglopes/google-cloud-sdk/path.fish.inc'; end
+export PATH="$HOME/.local/bin:$PATH"
