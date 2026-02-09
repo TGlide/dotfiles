@@ -52,12 +52,33 @@ return { -- Fuzzy Finder (files, lsp, etc)
 			--     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
 			--   },
 			-- },
+			defaults = {
+				file_ignore_patterns = { "node_modules", ".git" },
+			},
 			pickers = {
-				find_files = { hidden = true },
+				find_files = {
+					hidden = true,
+					find_command = {
+						"fd",
+						"--type",
+						"f",
+						"--strip-cwd-prefix",
+						"--follow",
+						"--hidden",
+						"--exclude",
+						".git",
+					},
+				},
 			},
 			extensions = {
 				["ui-select"] = {
 					require("telescope.themes").get_dropdown(),
+				},
+				fzf = {
+					fuzzy = true,
+					override_generic_sorter = true,
+					override_file_sorter = true,
+					case_mode = "smart_case",
 				},
 			},
 		})
@@ -68,36 +89,36 @@ return { -- Fuzzy Finder (files, lsp, etc)
 
 		-- See `:help telescope.builtin`
 		local builtin = require("telescope.builtin")
-		vim.keymap.set("n", "<leader>t", ":Telescope<CR>", {})
-		vim.keymap.set("n", "<leader>pf", function()
-			builtin.find_files({
-				file_ignore_patterns = { "node%_modules/.*", ".git/.*" },
-			})
-		end, { desc = "Find [F]iles" })
-		vim.keymap.set("n", "<leader>ph", builtin.help_tags, { desc = "Search [H]elp" })
-		vim.keymap.set("n", "<leader>pk", builtin.keymaps, { desc = "Search [K]eymaps" })
+		-- vim.keymap.set("n", "<leader>t", ":Telescope<CR>", {})
+		-- vim.keymap.set("n", "<leader>pf", function()
+		-- 	builtin.find_files({
+		-- 		file_ignore_patterns = { "node%_modules/.*", ".git/.*" },
+		-- 	})
+		-- end, { desc = "Find [F]iles" })
+		-- vim.keymap.set("n", "<leader>ph", builtin.help_tags, { desc = "Search [H]elp" })
+		-- vim.keymap.set("n", "<leader>pk", builtin.keymaps, { desc = "Search [K]eymaps" })
 		-- vim.keymap.set("n", "<leader>ps", builtin.builtin, { desc = "Search [S]elect Telescope" })
-		vim.keymap.set("n", "<leader>ps", function()
-			-- builtin.live_grep()
-			builtin.grep_string({ search = vim.fn.input("Grep > ") })
-		end, { desc = "[P]roject [S]earch" })
-		vim.keymap.set("n", "<leader>pw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
-		vim.keymap.set("n", "<leader>pg", builtin.live_grep, { desc = "Search by [G]rep" })
-		vim.keymap.set("n", "<leader>pd", builtin.diagnostics, { desc = "Search [D]iagnostics" })
-		vim.keymap.set("n", "<leader>pr", builtin.resume, { desc = "Search [R]esume" })
-		vim.keymap.set("n", "<leader>p.", builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
-		vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
+		-- vim.keymap.set("n", "<leader>ps", function()
+		-- 	-- builtin.live_grep()
+		-- 	builtin.grep_string({ search = vim.fn.input("Grep > ") })
+		-- end, { desc = "[P]roject [S]earch" })
+		-- vim.keymap.set("n", "<leader>pw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
+		-- vim.keymap.set("n", "<leader>pg", builtin.live_grep, { desc = "Search by [G]rep" })
+		-- vim.keymap.set("n", "<leader>pd", builtin.diagnostics, { desc = "Search [D]iagnostics" })
+		-- vim.keymap.set("n", "<leader>pr", builtin.resume, { desc = "Search [R]esume" })
+		-- vim.keymap.set("n", "<leader>p.", builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
+		-- vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 
 		-- Slightly advanced example of overriding default behavior and theme
-		vim.keymap.set("n", "<leader>/", function()
-			-- You can pass additional configuration to Telescope to change the theme, layout, etc.
-			builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-				winblend = 10,
-				previewer = false,
-			}))
-		end, { desc = "[/] Fuzzily search in current buffer" })
-
-		vim.keymap.set("n", "<leader>ch", builtin.command_history, { desc = "[C]ommand [H]istory" })
-		vim.keymap.set("n", "<leader>cc", builtin.commands, { desc = "[C]ommands" })
+		-- vim.keymap.set("n", "<leader>/", function()
+		-- 	-- You can pass additional configuration to Telescope to change the theme, layout, etc.
+		-- 	builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
+		-- 		winblend = 10,
+		-- 		previewer = false,
+		-- 	}))
+		-- end, { desc = "[/] Fuzzily search in current buffer" })
+		--
+		-- vim.keymap.set("n", "<leader>ch", builtin.command_history, { desc = "[C]ommand [H]istory" })
+		-- vim.keymap.set("n", "<leader>cc", builtin.commands, { desc = "[C]ommands" })
 	end,
 }

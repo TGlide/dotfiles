@@ -244,6 +244,8 @@ binds {
 		// Super+A hotkey-overlay-title="Capture Screen" { spawn "sh" "-c" "grim -g \"$(slurp; sleep .1)\" - | swappy -f -"; }
 		Super+M hotkey-overlay-title="Media Output Select" { spawn "sh" "-c" "~/scripts/rofi-media.sh"; }
 		Super+Semicolon hotkey-overlay-title="Emoji picker" { spawn "sh" "-c" "rofimoji"; }
+		Alt+Space { spawn "sh" "-c" "pkill -USR2 -n handy"; }
+		
 
 		XF86AudioPlay allow-when-locked=true { spawn "playerctl" "play-pause"; }
 		XF86AudioNext allow-when-locked=true { spawn "playerctl" "next"; }

@@ -31,7 +31,7 @@ return {
 						vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
 
-					map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+					-- map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
 					map("<leader>lr", ":LspRestart<CR>", "Restart LSP")
 
 					map("K", function()
@@ -55,22 +55,22 @@ return {
 					map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
 
 					-- Find references for the word under your cursor.
-					map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+					map("gtref", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
 
 					-- Jump to the implementation of the word under your cursor.
-					map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
+					-- map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
 
 					-- Goto Declaration (e.g., in C this would take you to the header)
 					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
 					-- Fuzzy find all the symbols in your current document.
-					map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
+					-- map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
 
 					-- Fuzzy find all the symbols in your current workspace.
-					map("gW", require("telescope.builtin").lsp_dynamic_workspace_symbols, "Open Workspace Symbols")
+					-- map("gW", require("telescope.builtin").lsp_dynamic_workspace_symbols, "Open Workspace Symbols")
 
 					-- Jump to the type of the word under your cursor.
-					map("gt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
+					-- map("gt", require("telescope.builtin").lsp_type_definitions, "[G]oto [T]ype Definition")
 
 					map("<leader>vd", function()
 						vim.diagnostic.open_float()
@@ -86,8 +86,12 @@ return {
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 
 					-- Highlight references of the word under cursor
-					if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-						local highlight_augroup = vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
+					if
+						client
+						and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
+					then
+						local highlight_augroup =
+							vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = event.buf,
 							group = highlight_augroup,
@@ -110,7 +114,9 @@ return {
 					end
 
 					-- Toggle inlay hints keymap
-					if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+					if
+						client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
+					then
 						map("<leader>th", function()
 							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 						end, "[T]oggle Inlay [H]ints")
@@ -178,9 +184,23 @@ return {
 					"lua-language-server",
 					"css-lsp",
 					"eslint-lsp",
+					"vtsls",
 					"tailwindcss-language-server",
+					"biome",
 				},
 			})
+
+			-- Load custom LSP configs from nvim/lsp/*.lua to override nvim-lspconfig defaults
+			local lsp_path = vim.fn.stdpath("config") .. "/lsp"
+			for _, file in ipairs(vim.fn.readdir(lsp_path)) do
+				if file:match("%.lua$") then
+					local name = file:gsub("%.lua$", "")
+					local config = dofile(lsp_path .. "/" .. file)
+					if type(config) == "table" then
+						vim.lsp.config(name, config)
+					end
+				end
+			end
 
 			-- Enable LSP servers (configs are in nvim/lsp/*.lua)
 			vim.lsp.enable({
@@ -188,9 +208,11 @@ return {
 				"cssls",
 				"eslint",
 				"gdscript",
-				"vtsls",
+				-- "vtsls",
+				"tsgo",
 				"svelte",
 				"tailwindcss",
+				"biome",
 			})
 		end,
 	},

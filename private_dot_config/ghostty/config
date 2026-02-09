@@ -13,3 +13,6 @@ font-size = 14
 # custom-shader = ./alt-shaders/scanlines.glsl
 keybind = shift+enter=text:\x1b\r
 keybind = ctrl+alt+comma=open_config
+
+keybind = ctrl+shift+page_up=move_tab:-1
+keybind = ctrl+shift+page_down=move_tab:1

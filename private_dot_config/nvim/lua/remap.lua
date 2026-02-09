@@ -3,8 +3,10 @@ local map = function(keys, func, desc, mode)
 	vim.keymap.set(mode, keys, func, { desc = desc })
 end
 
--- Project view
-map("<leader>pv", ":Oil<CR>", "Open Oil file explorer")
+-- Project view (mini.files)
+map("<leader>pv", function()
+	MiniFiles.open(vim.api.nvim_buf_get_name(0))
+end, "Open file explorer")
 
 -- Move lines around
 map("J", ":m '>+1<CR>gv=gv", "Move line down", "v")
@@ -35,15 +37,15 @@ map("<leader>d", '"_d', "Delete without updating register", "v")
 map("Q", "<nop>", "Disable Q")
 
 -- Formatting
-map("<leader>f", function()
+map("<leader>fo", function()
 	vim.cmd("Format")
 	vim.notify("Formatted file", vim.log.levels.INFO, { title = "Formatting" })
 end, "Format file")
-map("<leader>ef", function()
+map("<leader>fe", function()
 	vim.cmd("FormatEnable")
 	vim.notify("Enabled auto-format", vim.log.levels.INFO, { title = "Formatting" })
 end, "Enable auto-format")
-map("<leader>df", function()
+map("<leader>fd", function()
 	vim.cmd("FormatDisable")
 	vim.notify("Disabled auto-format", vim.log.levels.INFO, { title = "Formatting" })
 end, "Disable auto-format")

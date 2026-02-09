@@ -274,16 +274,16 @@ return {
 			-- Module mappings. Use `''` (empty string) to disable one.
 			mappings = {
 				-- Move visual selection in Visual mode. Defaults are Alt (Meta) + hjkl.
-				left = "<M-left>",
-				right = "<M-right>",
-				down = "<M-down>",
-				up = "<M-up>",
+				left = "<C-S-Left>",
+				right = "<C-S-Right>",
+				down = "<C-S-Down>",
+				up = "<C-S-Up>",
 
 				-- Move current line in Normal mode
-				line_left = "<M-left>",
-				line_right = "<M-right>",
-				line_down = "<M-down>",
-				line_up = "<M-up>",
+				line_left = "<C-S-Left>",
+				line_right = "<C-S-Right>",
+				line_down = "<C-S-Down>",
+				line_up = "<C-S-Up>",
 			},
 
 			-- Options which control moving behavior
@@ -302,5 +302,149 @@ return {
 				["svelte.ts"] = { glyph = "", hl = "MiniIconsAzure" },
 			},
 		})
+
+		require("mini.files").setup({
+			-- Customization of shown content
+			content = {
+				-- Predicate for which file system entries to show
+				filter = nil,
+				-- What prefix to show to the left of file system entry
+				prefix = nil,
+				-- In which order to show file system entries
+				sort = nil,
+			},
+			-- Module mappings created only inside explorer.
+			-- Use `''` (empty string) to not create one.
+			mappings = {
+				close = "q",
+				go_in = "<Right>",
+				go_in_plus = "L",
+				go_out = "<Left>",
+				go_out_plus = "H",
+				mark_goto = "'",
+				mark_set = "m",
+				reset = "<BS>",
+				reveal_cwd = "@",
+				show_help = "g?",
+				synchronize = "=",
+				trim_left = "<",
+				trim_right = ">",
+			},
+			-- General options
+			options = {
+				-- Whether to delete permanently or move into module-specific trash
+				permanent_delete = true,
+				-- Whether to use for editing directories
+				use_as_default_explorer = false,
+			},
+			-- Customization of explorer windows
+			windows = {
+				-- Maximum number of windows to show side by side
+				max_number = math.huge,
+				-- Whether to show preview of file/directory under cursor
+				preview = false,
+				-- Width of focused window
+				width_focus = 50,
+				-- Width of other windows
+				width_nofocus = 15,
+			},
+		})
+
+		vim.api.nvim_create_autocmd("User", {
+			pattern = "MiniFilesActionRename",
+			callback = function(event)
+				Snacks.rename.on_rename_file(event.data.from, event.data.to)
+			end,
+		})
+
+		-- local MiniPick = require("mini.pick")
+		-- MiniPick.setup({
+		-- 	-- Delays (in ms; should be at least 1)
+		-- 	delay = {
+		-- 		-- Delay between forcing asynchronous behavior
+		-- 		async = 10,
+		--
+		-- 		-- Delay between computation start and visual feedback about it
+		-- 		busy = 50,
+		-- 	},
+		--
+		-- 	-- Keys for performing actions. See `:h MiniPick-actions`.
+		-- 	mappings = {
+		-- 		caret_left = "<Left>",
+		-- 		caret_right = "<Right>",
+		--
+		-- 		choose = "<CR>",
+		-- 		choose_in_split = "<C-s>",
+		-- 		choose_in_tabpage = "<C-t>",
+		-- 		choose_in_vsplit = "<C-v>",
+		-- 		choose_marked = "<M-CR>",
+		--
+		-- 		delete_char = "<BS>",
+		-- 		delete_char_right = "<Del>",
+		-- 		delete_left = "<C-u>",
+		-- 		delete_word = "<C-w>",
+		--
+		-- 		mark = "<C-x>",
+		-- 		mark_all = "<C-a>",
+		--
+		-- 		move_down = "<C-n>",
+		-- 		move_start = "<C-g>",
+		-- 		move_up = "<C-p>",
+		--
+		-- 		paste = "<C-r>",
+		--
+		-- 		refine = "<C-Space>",
+		-- 		refine_marked = "<M-Space>",
+		--
+		-- 		scroll_down = "<C-f>",
+		-- 		scroll_left = "<C-h>",
+		-- 		scroll_right = "<C-l>",
+		-- 		scroll_up = "<C-b>",
+		--
+		-- 		stop = "<Esc>",
+		--
+		-- 		toggle_info = "<S-Tab>",
+		-- 		toggle_preview = "<Tab>",
+		-- 	},
+		--
+		-- 	-- General options
+		-- 	options = {
+		-- 		-- Whether to show content from bottom to top
+		-- 		content_from_bottom = false,
+		--
+		-- 		-- Whether to cache matches (more speed and memory on repeated prompts)
+		-- 		use_cache = false,
+		-- 	},
+		--
+		-- 	-- Source definition. See `:h MiniPick-source`.
+		-- 	source = {
+		-- 		items = nil,
+		-- 		name = nil,
+		-- 		cwd = nil,
+		--
+		-- 		match = nil,
+		-- 		show = nil,
+		-- 		preview = nil,
+		--
+		-- 		choose = nil,
+		-- 		choose_marked = nil,
+		-- 	},
+		--
+		-- 	-- Window related options
+		-- 	window = {
+		-- 		-- Float window config (table or callable returning it)
+		-- 		config = nil,
+		--
+		-- 		-- String to use as caret in prompt
+		-- 		prompt_caret = "▏",
+		--
+		-- 		-- String to use as prefix in prompt
+		-- 		prompt_prefix = "> ",
+		-- 	},
+		-- })
+		--
+		-- vim.keymap.set("n", "<leader>pf", function()
+		-- 	MiniPick.builtin.files({ tool = "git" })
+		-- end, { desc = "Find [F]iles" })
 	end,
 }

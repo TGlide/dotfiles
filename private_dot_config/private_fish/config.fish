@@ -54,11 +54,11 @@ status is-interactive; and begin
     # Interactive shell initialisation
     fish_config theme choose rose-pine-moon
     set fish_greeting # Disable greeting
-    test -f ~/.config/myvars; and source ~/.config/myvars
     test -f /run/current-system/sw/share/autojump/autojump.fish; and source /run/current-system/sw/share/autojump/autojump.fish
 		[ -f /opt/homebrew/share/autojump/autojump.fish ]; and source /opt/homebrew/share/autojump/autojump.fish
-    test -f ~/.env; and source ~/.env
 
+    test -f ~/.env; and source ~/.env
+		test -f ~/.config/myvars; and source ~/.config/myvars
 
     nerdfetch
 
@@ -148,3 +148,5 @@ set --export PATH $BUN_INSTALL/bin $PATH
 
 # opencode
 fish_add_path /home/thomasgl/.opencode/bin
+
+source ~/.safe-chain/scripts/init-fish.fish # Safe-chain Fish initialization script
