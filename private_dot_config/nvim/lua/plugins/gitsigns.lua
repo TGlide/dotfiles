@@ -39,7 +39,7 @@ return {
 				map("n", "<leader>gp", gitsigns.preview_hunk, { desc = "Preview hunk" })
 				-- map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end)
 				-- map('n', '<leader>tb', gitsigns.toggle_current_line_blame)
-				map("n", "<leader>gd", gitsigns.diffthis, { desc = "Diff this" })
+				map("n", "<leader>gD", gitsigns.diffthis, { desc = "Diff this" })
 				-- map('n', '<leader>hD', function() gitsigns.diffthis('~') end)
 				-- map('n', '<leader>td', gitsigns.toggle_deleted)
 
