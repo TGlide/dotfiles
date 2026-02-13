@@ -12,7 +12,7 @@ return {
 					openai_compatible = {
 						api_key = "OPENROUTER_API_KEY",
 						end_point = "https://openrouter.ai/api/v1/chat/completions",
-						model = "moonshotai/kimi-k2",
+						model = "google/gemini-3-flash-preview",
 						name = "Openrouter",
 						optional = {
 							max_tokens = 56,
