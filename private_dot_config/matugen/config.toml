@@ -40,4 +40,4 @@ output_path = '~/.config/jjui/themes/matugen.toml'
 [templates.nvim]
 input_path = '~/.config/matugen/templates/neovim.lua'
 output_path = '~/.config/nvim/lua/plugins/dankcolors.lua'
-post_hook = 'scp -i ~/.ssh/mac-attio ~/.config/nvim/lua/plugins/dankcolors.lua thomasglopes@192.168.1.205:~/.config/nvim/lua/plugins/'
+post_hook = '(scp -i ~/.ssh/mac-attio ~/.config/nvim/lua/plugins/dankcolors.lua thomasglopes@192.168.1.205:~/.config/nvim/lua/plugins/ >/dev/null 2>&1 &)'

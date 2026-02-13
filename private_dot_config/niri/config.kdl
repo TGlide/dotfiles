@@ -236,7 +236,7 @@ binds {
 		Mod+Shift+Slash { show-hotkey-overlay; }
 
 		// APPLICATIONS
-		Mod+T hotkey-overlay-title="Open a Terminal: Ghostty" { spawn "ghostty"; }
+		Mod+T hotkey-overlay-title="Open main Terminal" { spawn "wezterm"; }
 		Super+E hotkey-overlay-title="Open Nautilus" { spawn "nautilus"; }
 
 		// SCRIPTS
