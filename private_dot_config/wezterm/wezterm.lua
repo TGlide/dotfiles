@@ -26,4 +26,22 @@ config.keys = {
 	{ key = "DownArrow", mods = "CTRL|SHIFT", action = act.DisableDefaultAssignment },
 }
 
+-- mouse
+local scroll_amnt = 7
+config.mouse_bindings = {
+	-- Slower scroll up/down
+	{
+		event = { Down = { streak = 1, button = { WheelUp = 1 } } },
+		mods = "NONE",
+		action = wezterm.action.ScrollByLine(-scroll_amnt),
+		alt_screen = false,
+	},
+	{
+		event = { Down = { streak = 1, button = { WheelDown = 1 } } },
+		mods = "NONE",
+		action = wezterm.action.ScrollByLine(scroll_amnt),
+		alt_screen = false,
+	},
+}
+
 return config
