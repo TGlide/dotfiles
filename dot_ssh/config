@@ -15,8 +15,8 @@ Host hf.co
 	IdentityFile ~/.ssh/github
 	AddKeysToAgent yes
 
-Host tangled.sh
-	HostName tangled.sh
+Host tangled.org
+	HostName tangled.org
 	User git
 	IdentityFile ~/.ssh/tangled
 	AddKeysToAgent yes
