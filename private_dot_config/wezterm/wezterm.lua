@@ -48,4 +48,9 @@ config.mouse_bindings = {
 config.font = wezterm.font("IosevkaTermSlab Nerd Font", { weight = 400 })
 config.font_size = 12.0
 
+-- events
+-- wezterm.on("window-config-reloaded", function(window, pane)
+-- 	window:toast_notification("wezterm", "configuration reloaded!", nil, 1000)
+-- end)
+
 return config
