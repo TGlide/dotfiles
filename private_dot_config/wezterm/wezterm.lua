@@ -44,4 +44,8 @@ config.mouse_bindings = {
 	},
 }
 
+-- font
+config.font = wezterm.font("IosevkaTermSlab Nerd Font", { weight = 400 })
+config.font_size = 12.0
+
 return config
