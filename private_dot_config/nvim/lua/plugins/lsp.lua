@@ -182,6 +182,7 @@ return {
 				ensure_installed = {
 					"stylua",
 					"lua-language-server",
+					"pyright",
 					"css-lsp",
 					"eslint-lsp",
 					"vtsls",
@@ -205,6 +206,7 @@ return {
 			-- Enable LSP servers (configs are in nvim/lsp/*.lua)
 			vim.lsp.enable({
 				"lua_ls",
+				"pyright",
 				"cssls",
 				"eslint",
 				"gdscript",
