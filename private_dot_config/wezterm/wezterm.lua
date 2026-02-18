@@ -53,4 +53,9 @@ config.font_size = 12.0
 -- 	window:toast_notification("wezterm", "configuration reloaded!", nil, 1000)
 -- end)
 
+-- fix for clipboard bug
+wezterm.on("window-focus-changed", function()
+	wezterm.run_child_process({ "sh", "-c", "wl-paste -n | wl-copy" })
+end)
+
 return config
