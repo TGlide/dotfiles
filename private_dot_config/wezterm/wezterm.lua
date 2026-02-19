@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
+local mux = wezterm.mux
 
 -- This will hold the configuration.
 local config = wezterm.config_builder()
@@ -57,5 +58,8 @@ config.font_size = 12.0
 wezterm.on("window-focus-changed", function()
 	wezterm.run_child_process({ "sh", "-c", "wl-paste -n | wl-copy" })
 end)
+
+-- sizing TODO: size with niri instead
+config.initial_cols = 120
 
 return config
